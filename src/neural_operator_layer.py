@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 class NeuralOperator(nn.Module):
@@ -22,6 +23,7 @@ class NeuralOperator(nn.Module):
 
         # Fourth fully connected layer and output
         self.fc4 = nn.Linear(128, 64)
+   
 
     def forward(self, x):
         x = self.gelu(self.fc1(x))

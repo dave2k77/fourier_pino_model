@@ -24,16 +24,18 @@ if __name__ == "__main__":
     model = PINO_2D_Heat_Equation()
 
     # Load training and test data
-    data = HeatmapPDEDataset(heatmap_folder, pde_solution_folder, transform=ToTensor())
+    data = HeatmapPDEDataset(heatmap_folder, pde_solution_folder)
     train_dataset, test_dataset = split_data(dataset)
-    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=4)
-    test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False, num_workers=4)
+    train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
+    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 
     # Set hyperparameters
     lr = 0.001 # options: 0.001, 0.005, 0.01, 0.05, 0.1
     num_epochs = 100 # options: 100, 250, 500
     physics_loss_coefficient = 0.001 # options: 0.01, 0.1, 1.0, 2.0
-    optimiser = optim.SGD(model.parameters(), lr=lr)
+    optimizer = optim.SGD(model.parameters(), lr=lr)
+    loss_fn = loss_function
 
-    loss_history = train(model, loss_function, optimiser, train_loader, test_loader, num_epochs)
+
+    loss_history = train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, physics_loss_coefficient=physics_loss_coefficient)
     plot_loss(loss_history)

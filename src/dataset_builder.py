@@ -4,15 +4,16 @@ import torch
 from torch.utils.data import Dataset, DataLoader, Subset
 from torchvision.transforms import ToTensor
 from sklearn.model_selection import train_test_split
+from PIL import Image
 
-heatmap_folder = "images/heatmaps"
-pde_solution_folder = "images/pde_solutions"
+heatmap_folder = r"images\heatmaps"
+pde_solution_folder = r"images\pde_solutions"
 
 class HeatmapPDEDataset(Dataset):
     def __init__(self, heatmap_folder, pde_solution_folder, transform=None):
         self.heatmap_folder = heatmap_folder
         self.pde_solution_folder = pde_solution_folder
-        self.transform = transform
+        self.transform = transform if transform is not None else ToTensor()
 
         self.heatmap_files = sorted(os.listdir(heatmap_folder))
         self.pde_solution_files = sorted(os.listdir(pde_solution_folder))
@@ -24,11 +25,14 @@ class HeatmapPDEDataset(Dataset):
         heatmap_path = os.path.join(self.heatmap_folder, self.heatmap_files[idx])
         pde_solution_path = os.path.join(self.pde_solution_folder, self.pde_solution_files[idx])
 
-        heatmap = np.load(heatmap_path)
-        pde_solution = np.load(pde_solution_path)
+        heatmap = Image.open(heatmap_path).convert('L').resize((64, 64))
 
         if self.transform:
             heatmap = self.transform(heatmap)
+
+        with np.load(pde_solution_path) as data:
+            pde_solution_np = data['u']
+            pde_solution = torch.tensor(pde_solution_np, dtype=torch.float32)
 
         return heatmap, pde_solution
 
@@ -47,8 +51,8 @@ def split_data(dataset, test_size=0.2, random_state=42):
 
     return train_dataset, test_dataset
 
-dataset = HeatmapPDEDataset(heatmap_folder, pde_solution_folder, transform=ToTensor())
+dataset = HeatmapPDEDataset(heatmap_folder, pde_solution_folder)
 train_dataset, test_dataset = split_data(dataset)
 
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=4)
-test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False, num_workers=4)
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
