@@ -18,7 +18,7 @@ class HeatEquationSolver:
         self.u = np.empty((max_iter_time, plate_length, plate_width))
         self.bc_and_ic_setup()
 
-    def bc_and_ic_setup(self, u_initial=0, u_top=100, u_left=0, u_bottom=0, u_right=0):
+    def bc_and_ic_setup(self, u_initial=25, u_top=100, u_left=0, u_bottom=0, u_right=0):
         self.u.fill(u_initial)
         self.u[:, (self.plate_length - 1):, :] = u_top
         self.u[:, :, :1] = u_left
@@ -49,7 +49,7 @@ class HeatEquationSolver:
         return self.plotheatmap(self.u[k], k)
     
 
-    def save_animation(self, filename="movies/heat_equation_solution_alpha10_u50.gif", writer='imagemagick'):
+    def save_animation(self, filename="movies/heat_equation_solution_alpha10_u25.gif", writer='imagemagick'):
         anim = FuncAnimation(plt.figure(), self.animate, interval=1, frames=self.max_iter_time, repeat=False)
         anim.save(filename, writer=writer)
 
@@ -61,16 +61,16 @@ class HeatEquationSolver:
         for k in range(1, self.max_iter_time-1, 25):
             self.plotheatmap(self.u[k], k).savefig(f"images/png/heatmap_{k * 25}", dpi=300)
 
-    def save_solution_and_image(self, k, output_dir="images/data_u50"):
+    def save_solution_and_image(self, k, output_dir="images/data_u25"):
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
         # Save the solution 'u' as a .npz file
-        npz_filename = os.path.join(output_dir, f"solution_alpha10_u50_timestep_{k}.npz")
+        npz_filename = os.path.join(output_dir, f"solution_alpha10_u25_timestep_{k}.npz")
         np.savez(npz_filename, u=self.u[k])
 
         # Save the corresponding heatmap image as a .png file
-        png_filename = os.path.join(output_dir, f"heatmap_alpha10_u50_timestep_{k}.png")
+        png_filename = os.path.join(output_dir, f"heatmap_alpha10_u25_timestep_{k}.png")
         img = self.plotheatmap(self.u[k], k)
         img.savefig(png_filename, dpi=300)
 
