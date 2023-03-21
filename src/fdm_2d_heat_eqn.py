@@ -5,7 +5,7 @@ from matplotlib.animation import FuncAnimation
 import os
 
 class HeatEquationSolver:
-    def __init__(self, plate_length=150, plate_width=250, max_iter_time=500, alpha=0.1, delta_x=1, delta_y=1):
+    def __init__(self, plate_length=150, plate_width=250, max_iter_time=500, alpha=1.0, delta_x=1, delta_y=1):
         self.plate_length = plate_length
         self.plate_width = plate_width
         self.max_iter_time = max_iter_time
@@ -25,14 +25,14 @@ class HeatEquationSolver:
         self.u[:, :1, 1:] = u_bottom
         self.u[:, :, (self.plate_width - 1):] = u_right
 
-    def evolve(self, save_interval=25, filename_prefix="images/heat_equation_evolution"):
+    def evolve(self, save_interval=25): # add argument: filename_prefix="images/heat_equation_evolution" to save
         for k in range(0, self.max_iter_time - 1, 1):
             for i in range(1, self.plate_length - 1, self.delta_x):
                 for j in range(1, self.plate_width - 1, self.delta_y):
                     self.u[k + 1, i, j] = self.gamma * (self.u[k][i + 1][j] + self.u[k][i - 1][j] + self.u[k][i][j + 1] + self.u[k][i][j - 1] - 4 * self.u[k][i][j]) + self.u[k][i][j]
 
-            if (k + 1) % save_interval == 0:
-                self.save_evolution(f"{filename_prefix}_timestep_{k + 1}.npz", self.u[k + 1])
+            #if (k + 1) % save_interval == 0:
+            #    self.save_evolution(f"{filename_prefix}_timestep_{k + 1}.npz", self.u[k + 1])
 
     
     
@@ -49,7 +49,7 @@ class HeatEquationSolver:
         return self.plotheatmap(self.u[k], k)
     
 
-    def save_animation(self, filename="images/heat_equation_solution.gif", writer='imagemagick'):
+    def save_animation(self, filename="movies/heat_equation_solution_alpha10_u50.gif", writer='imagemagick'):
         anim = FuncAnimation(plt.figure(), self.animate, interval=1, frames=self.max_iter_time, repeat=False)
         anim.save(filename, writer=writer)
 
@@ -61,16 +61,16 @@ class HeatEquationSolver:
         for k in range(1, self.max_iter_time-1, 25):
             self.plotheatmap(self.u[k], k).savefig(f"images/png/heatmap_{k * 25}", dpi=300)
 
-    def save_solution_and_image(self, k, output_dir="images/data"):
+    def save_solution_and_image(self, k, output_dir="images/data_u50"):
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
         # Save the solution 'u' as a .npz file
-        npz_filename = os.path.join(output_dir, f"solution_timestep_{k}.npz")
+        npz_filename = os.path.join(output_dir, f"solution_alpha10_u50_timestep_{k}.npz")
         np.savez(npz_filename, u=self.u[k])
 
         # Save the corresponding heatmap image as a .png file
-        png_filename = os.path.join(output_dir, f"heatmap_timestep_{k}.png")
+        png_filename = os.path.join(output_dir, f"heatmap_alpha10_u50_timestep_{k}.png")
         img = self.plotheatmap(self.u[k], k)
         img.savefig(png_filename, dpi=300)
 
