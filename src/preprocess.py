@@ -60,24 +60,12 @@ def energy_conservation_loss(output, target, dx=1, dy=1, alpha=0.1):
     return energy_law_error
 
 
-
-
-
-def plot_loss(loss_history):
-    plt.figure(figsize=(10, 5))
-    plt.plot(loss_history, label='Training Loss')
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-    plt.title('Training Loss History')
-    plt.legend()
-    plt.show()
-
-
 def train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, physics_loss_coefficient=0.001):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    loss_history = []  # Initialize the loss_history list
+    train_loss_history = []
+    test_loss_history = []
 
     for epoch in range(num_epochs):
         model.train()
@@ -90,19 +78,20 @@ def train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, phys
             optimizer.zero_grad()
 
             outputs = model(heatmaps)
-            loss = loss_function(outputs, pde_solutions, physics_loss_coefficient)
-            loss.backward()
+            loss_fn = loss_function(outputs, pde_solutions, physics_loss_coefficient)
+            loss_fn.backward()
             optimizer.step()
 
-            running_loss += loss.item()
+            running_loss += loss_fn.item()
 
             epoch_loss = running_loss / (i + 1)
-            loss_history.append(epoch_loss)  # Append the average loss of the epoch to the loss_history list
+            train_loss_history.append(epoch_loss)
             print(f"Epoch [{epoch+1}/{num_epochs}] - Loss: {epoch_loss:.4f}")
 
         # Evaluate on the test dataset
         model.eval()
         test_loss = 0.0
+        r2_scores = []
         with torch.no_grad():
             for i, (heatmaps, pde_solutions) in enumerate(test_loader):
                 heatmaps = heatmaps.to(device)
@@ -110,11 +99,42 @@ def train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, phys
 
                 outputs = model(heatmaps)
                 loss = loss_function(outputs, pde_solutions, physics_loss_coefficient)
+                r2 = r2_score(pde_solutions, outputs.real)
 
                 test_loss += loss.item()
+                r2_scores.append(r2)
 
                 test_epoch_loss = test_loss / (i + 1)
-                print(f"Test Loss: {test_epoch_loss:.4f}")
+                test_loss_history.append(test_epoch_loss)
+                mean_r2_score = sum(r2_scores) / len(r2_scores)
+                print(f"Test Loss: {test_epoch_loss:.4f}, R-squared Score: {mean_r2_score:.4f}")
 
-    return model, loss_history
+    return train_loss_history, test_loss_history
 
+
+def r2_score(y_true, y_pred):
+    ss_total = ((y_true - y_true.mean()) ** 2).sum()
+    ss_residual = ((y_true - y_pred) ** 2).sum()
+    r2 = 1 - (ss_residual / ss_total)
+    return r2.item()
+
+
+
+def plot_loss(train_loss_history, test_loss_history, save=False, save_path=r'graphs\loss_plot.png'):
+    plt.figure(figsize=(10, 5))
+    plt.plot(train_loss_history, label='Training Loss')
+    plt.plot(test_loss_history, label='Test Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Training and Test Loss History')
+    plt.legend()
+
+    if save:
+        # Create the directory if it does not exist
+        directory = os.path.dirname(save_path)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        plt.savefig(save_path)
+
+    plt.show()
