@@ -30,10 +30,12 @@ def fourier_derivative_2d(input, axis=0):
 
 
 def loss_function(output, target, physics_loss_coefficient):
-    operator_loss = nn.MSELoss()(output, target)
-    physics_loss = energy_conservation_loss(output, target)
+    output_real = output.real  # Take the real part of the output tensor
+    operator_loss = nn.MSELoss()(output_real, target)
+    physics_loss = energy_conservation_loss(output_real, target)
     loss = operator_loss + physics_loss_coefficient * physics_loss
     return loss
+
 
 
 def energy_conservation_loss(output, target, dx=1, dy=1, alpha=0.1):
@@ -44,13 +46,20 @@ def energy_conservation_loss(output, target, dx=1, dy=1, alpha=0.1):
     time_derivative_error = torch.abs((output[:, 1:] - output[:, :-1]) / dt - (target[:, 1:] - target[:, :-1]) / dt)
 
     # Calculate the spatial derivative errors
-    x_derivative_error = torch.abs(fourier_derivative_2d(output, axis=0) - fourier_derivative_2d(target, axis=0))
-    y_derivative_error = torch.abs(fourier_derivative_2d(output, axis=1) - fourier_derivative_2d(target, axis=1))
+    batch_size = output.size(0)
+    x_derivative_error = torch.zeros_like(time_derivative_error)
+    y_derivative_error = torch.zeros_like(time_derivative_error)
+
+    for i in range(batch_size):
+        x_derivative_error[i] = torch.abs(fourier_derivative_2d(output[i, :-1], axis=0) - fourier_derivative_2d(target[i, :-1], axis=0))
+        y_derivative_error[i] = torch.abs(fourier_derivative_2d(output[i, :-1], axis=1) - fourier_derivative_2d(target[i, :-1], axis=1))
 
     # Implement the loss based on the energy conservation law
     energy_law_error = ((time_derivative_error - alpha * (x_derivative_error + y_derivative_error)) ** 2).mean()
 
     return energy_law_error
+
+
 
 
 
@@ -68,6 +77,8 @@ def train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, phys
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
+    loss_history = []  # Initialize the loss_history list
+
     for epoch in range(num_epochs):
         model.train()
         running_loss = 0.0
@@ -79,14 +90,15 @@ def train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, phys
             optimizer.zero_grad()
 
             outputs = model(heatmaps)
-            loss_fn = loss_function(outputs, pde_solutions, physics_loss_coefficient)
-            loss_fn.backward()
+            loss = loss_function(outputs, pde_solutions, physics_loss_coefficient)
+            loss.backward()
             optimizer.step()
 
-            running_loss += loss_fn.item()
+            running_loss += loss.item()
 
-        epoch_loss = running_loss / (i + 1)
-        print(f"Epoch [{epoch+1}/{num_epochs}] - Loss: {epoch_loss:.4f}")
+            epoch_loss = running_loss / (i + 1)
+            loss_history.append(epoch_loss)  # Append the average loss of the epoch to the loss_history list
+            print(f"Epoch [{epoch+1}/{num_epochs}] - Loss: {epoch_loss:.4f}")
 
         # Evaluate on the test dataset
         model.eval()
@@ -101,7 +113,8 @@ def train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, phys
 
                 test_loss += loss.item()
 
-        test_epoch_loss = test_loss / (i + 1)
-        print(f"Test Loss: {test_epoch_loss:.4f}")
+                test_epoch_loss = test_loss / (i + 1)
+                print(f"Test Loss: {test_epoch_loss:.4f}")
 
-    return model
+    return model, loss_history
+

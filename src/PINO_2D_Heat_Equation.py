@@ -13,7 +13,8 @@ class PINO_2D_Heat_Equation(nn.Module):
         self.decoder = InverseFourierTransformLayer()
 
     def forward(self, x):
-        x = self.encoder(x)
+       
+        x = self.encoder(x) # returns x: complex float
         x = self.neural_operator(x)
         x = self.decoder(x)
         return x
@@ -22,12 +23,13 @@ if __name__ == "__main__":
 
     # Initilise PINO 2D Heat Equation Model
     model = PINO_2D_Heat_Equation()
+    #model.to(torch.complex64)
 
     # Load training and test data
     data = HeatmapPDEDataset(heatmap_folder, pde_solution_folder)
     train_dataset, test_dataset = split_data(dataset)
-    train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
+    train_loader = DataLoader(train_dataset, shuffle=True)
+    test_loader = DataLoader(test_dataset, shuffle=False)
 
     # Set hyperparameters
     lr = 0.001 # options: 0.001, 0.005, 0.01, 0.05, 0.1
@@ -37,5 +39,5 @@ if __name__ == "__main__":
     loss_fn = loss_function
 
 
-    loss_history = train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, physics_loss_coefficient=physics_loss_coefficient)
+    model, loss_history = train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, physics_loss_coefficient=physics_loss_coefficient)
     plot_loss(loss_history)

@@ -25,16 +25,23 @@ class HeatmapPDEDataset(Dataset):
         heatmap_path = os.path.join(self.heatmap_folder, self.heatmap_files[idx])
         pde_solution_path = os.path.join(self.pde_solution_folder, self.pde_solution_files[idx])
 
-        heatmap = Image.open(heatmap_path).convert('L').resize((64, 64))
+        heatmap = Image.open(heatmap_path).convert('L').resize((64, 64), Image.ANTIALIAS)
 
         if self.transform:
             heatmap = self.transform(heatmap)
+            heatmap = heatmap.to(torch.float32)
 
-        with np.load(pde_solution_path) as data:
+        with np.load(pde_solution_path, allow_pickle=True) as data:
             pde_solution_np = data['u']
+            # Resize the pde_solution using scipy.ndimage.zoom
+            from scipy.ndimage import zoom
+            zoom_factor = (64 / pde_solution_np.shape[0], 64 / pde_solution_np.shape[1])
+            pde_solution_np = zoom(pde_solution_np, zoom_factor, order=1)
+
             pde_solution = torch.tensor(pde_solution_np, dtype=torch.float32)
 
         return heatmap, pde_solution
+
 
 def split_data(dataset, test_size=0.2, random_state=42):
     dataset_size = len(dataset)
@@ -54,5 +61,5 @@ def split_data(dataset, test_size=0.2, random_state=42):
 dataset = HeatmapPDEDataset(heatmap_folder, pde_solution_folder)
 train_dataset, test_dataset = split_data(dataset)
 
-train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True, num_workers=1)
+test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False, num_workers=1)

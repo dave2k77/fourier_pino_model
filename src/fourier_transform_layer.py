@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import numpy as np
 
 class FourierTransformLayer(nn.Module):
     """
@@ -18,3 +19,4 @@ class FourierTransformLayer(nn.Module):
         x_fft = torch.fft.fft2(x)
 
         return x_fft
+    
