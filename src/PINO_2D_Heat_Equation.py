@@ -24,8 +24,8 @@ class PINO_2D_Heat_Equation(nn.Module):
 
 if __name__ == "__main__":
     # Replace these paths with the correct ones for your dataset
-    heatmap_folder = r'code\heatmaps'
-    pde_solution_folder = r'code\pde_solutions'
+    heatmap_folder = r"images\heatmaps"
+    pde_solution_folder = r"images\pde_solutions"
 
     # Initilise PINO 2D Heat Equation Model
     model = PINO_2D_Heat_Equation()
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     # Set hyperparameters
     num_epochs = 100  # options: 100, 250, 500
-    physics_loss_coefficient = 0.1  # options: 0.01, 0.1, 1.0, 2.0
+    physics_loss_coefficient = 5  # options: 0.01, 0.1, 1.0, 3.0, 5.0
     optimizer = optim.SGD(model.parameters(), lr=0.001)
     loss_fn = loss_function
 
