@@ -66,6 +66,7 @@ def train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, phys
 
     train_loss_history = []
     test_loss_history = []
+    r2_mean = 0
 
     for epoch in range(num_epochs):
         model.train()
@@ -92,6 +93,7 @@ def train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, phys
         model.eval()
         test_loss = 0.0
         r2_scores = []
+        
         with torch.no_grad():
             for i, (heatmaps, pde_solutions) in enumerate(test_loader):
                 heatmaps = heatmaps.to(device)
@@ -108,8 +110,10 @@ def train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, phys
                 test_loss_history.append(test_epoch_loss)
                 mean_r2_score = sum(r2_scores) / len(r2_scores)
                 print(f"Test Loss: {test_epoch_loss:.4f}, R-squared Score: {mean_r2_score:.4f}")
+                r2_mean += mean_r2_score
+    
 
-    return train_loss_history, test_loss_history
+    return train_loss_history, test_loss_history, r2_mean
 
 
 def r2_score(y_true, y_pred):
@@ -136,5 +140,46 @@ def plot_loss(train_loss_history, test_loss_history, save=False, save_path=r'gra
             os.makedirs(directory)
 
         plt.savefig(save_path)
+
+    plt.show()
+
+
+def train_and_evaluate(model, loss_fn, optimizer, num_epochs, physics_loss_coefficient):
+    # Create and initialize your model, loss function, and optimizer
+    # ...
+
+    # Train the model and get the mean R-squared Score
+    _, _, mean_r2_score = train(model, loss_fn, optimizer, train_loader, test_loader, num_epochs, physics_loss_coefficient)
+
+    return mean_r2_score
+
+def plot_r2_vs_physics_loss_coefficients(physics_loss_coefficients, train_and_evaluate):
+    r2_scores = []
+
+    for coeff in physics_loss_coefficients:
+        r2 = train_and_evaluate(physics_loss_coefficient=coeff)
+        r2_scores.append(r2)
+
+    plt.plot(physics_loss_coefficients, r2_scores, marker='o')
+    plt.xlabel('Physics Loss Coefficient')
+    plt.ylabel('R-squared Score')
+    plt.title('R-squared Score vs. Physics Loss Coefficient')
+    plt.grid()
+    plt.show()
+
+def compare_solutions(predicted_solution, original_solution, error, time_index):
+    plt.figure(figsize=(18, 6))
+
+    plt.subplot(1, 3, 1)
+    plt.title("Predicted Solution")
+    plt.imshow(predicted_solution[time_index].detach().cpu().numpy(), cmap='viridis', origin='lower')  # Add .cpu().numpy()
+
+    plt.subplot(1, 3, 2)
+    plt.title("Original Solution")
+    plt.imshow(original_solution[time_index].detach().cpu().numpy(), cmap='viridis', origin='lower')  # Add .cpu().numpy()
+
+    plt.subplot(1, 3, 3)
+    plt.title("Error")
+    plt.imshow(error[time_index].detach().cpu().numpy(), cmap='viridis', origin='lower')  # Add .cpu().numpy()
 
     plt.show()

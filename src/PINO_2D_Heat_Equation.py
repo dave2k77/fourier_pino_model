@@ -23,12 +23,16 @@ class PINO_2D_Heat_Equation(nn.Module):
 
 
 if __name__ == "__main__":
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     # Replace these paths with the correct ones for your dataset
     heatmap_folder = r"images\heatmaps"
     pde_solution_folder = r"images\pde_solutions"
 
     # Initilise PINO 2D Heat Equation Model
     model = PINO_2D_Heat_Equation()
+    model.to(device)
 
     # Load training and test data
     data = HeatmapPDEDataset(heatmap_folder, pde_solution_folder)
@@ -38,12 +42,35 @@ if __name__ == "__main__":
 
     # Set hyperparameters
     num_epochs = 100  # options: 100, 250, 500
-    physics_loss_coefficient = 5  # options: 0.01, 0.1, 1.0, 3.0, 5.0
+    physics_loss_coefficient = 0.001  # options: 0.01, 0.1, 1.0, 3.0, 5.0
     optimizer = optim.SGD(model.parameters(), lr=0.001)
     loss_fn = loss_function
 
-    train_loss_history, test_loss_history = train(model=model, loss_fn=loss_fn, optimizer=optimizer,
+    train_loss_history, test_loss_history, mean_r2_score = train(model=model, loss_fn=loss_fn, optimizer=optimizer,
                                                   train_loader=train_loader, test_loader=test_loader,
                                                   num_epochs=num_epochs, physics_loss_coefficient=physics_loss_coefficient)
     plot_loss(train_loss_history, test_loss_history, save=True, save_path=r'graphs\train_test-phyloss-01.png')
+
+# Assuming predicted_solution and original_solution are NumPy arrays with the shape (num_time_steps, height, width)
+
+    time_index = 0  # Choose the time step you want to analyze
+
+    heatmaps_test, labels_test = next(iter(test_loader))
+    heatmaps_test = heatmaps_test.to(device)
+    labels_test = labels_test.to(device)
+    error = torch.abs(heatmaps_test - labels_test)
+
+    # Get the model predictions for the test data
+    predictions_test = model(heatmaps_test)
+
+    # Convert tensors to numpy arrays for plotting
+    heatmaps_test_np = heatmaps_test.detach().cpu().numpy()
+    labels_test_np = labels_test.detach().cpu().numpy()
+    predictions_test_np = predictions_test.detach().cpu().numpy()
+    error_np = error.detach().cpu().numpy()
+
+    compare_solutions(predictions_test, predictions_test, error_np, time_index)
+
+    physics_loss_coefficients = [0.001, 0.01, 0.1, 1.0, 3.0]
+    plot_r2_vs_physics_loss_coefficients(physics_loss_coefficients, train_and_evaluate)
 
