@@ -42,16 +42,35 @@ if __name__ == "__main__":
 
     # Set hyperparameters
     num_epochs = 100  # options: 100, 250, 500
-    physics_loss_coefficient = 0.001  # options: 0.01, 0.1, 1.0, 3.0, 5.0
-    optimizer = optim.SGD(model.parameters(), lr=0.001)
+
+    # physics loss coefficients
+    physics_loss_coefficient_A = 0.001
+    physics_loss_coefficient_B = 0.01 
+    physics_loss_coefficient_C = 0.1
+
+    # Learning Rates
+    lr_1 = 0.001
+    lr_2 = 0.005
+    lr_3 = 0.01
+
+    # Experiment A Optimizers
+    optimizerA_1 = optim.SGD(model.parameters(), lr=lr_1)
+    optimizerA_2 = optim.SGD(model.parameters(), lr=lr_2)
+    optimizerA_3 = optim.SGD(model.parameters(), lr=lr_3)
+
+    # Experiment B Optimzers
+    optimizerB_1 = optim.Adam(model.parameters(), lr=lr_1)
+    optimizerB_2 = optim.Adam(model.parameters(), lr=lr_2)
+    optimizerB_3 = optim.Adam(model.parameters(), lr=lr_3)
+    
+    # loss function
     loss_fn = loss_function
 
-    train_loss_history, test_loss_history, mean_r2_score = train(model=model, loss_fn=loss_fn, optimizer=optimizer,
+    # train the model
+    train_loss_history, test_loss_history, mean_r2_score = train(model=model, loss_fn=loss_fn, optimizer=optimizerB_2,
                                                   train_loader=train_loader, test_loader=test_loader,
-                                                  num_epochs=num_epochs, physics_loss_coefficient=physics_loss_coefficient)
+                                                  num_epochs=num_epochs, physics_loss_coefficient=physics_loss_coefficient_B)
     plot_loss(train_loss_history, test_loss_history, save=True, save_path=r'graphs\train_test-phyloss-01.png')
-
-# Assuming predicted_solution and original_solution are NumPy arrays with the shape (num_time_steps, height, width)
 
     time_index = 0  # Choose the time step you want to analyze
 
@@ -71,7 +90,7 @@ if __name__ == "__main__":
 
     compare_solutions(predictions_test, predictions_test, error_np, time_index)
 
-    physics_loss_coefficients = [0.001, 0.01, 0.1, 1.0, 3.0]
-    plot_r2_vs_physics_loss_coefficients(physics_loss_coefficients, train_and_evaluate, model, loss_fn, optimizer, num_epochs)
+    physics_loss_coefficients = [0.001, 0.01, 0.1]
+    plot_r2_vs_physics_loss_coefficients(physics_loss_coefficients, train_and_evaluate, model, loss_fn, optimizer=optimizerB_2, num_epochs=num_epochs)
 
 
