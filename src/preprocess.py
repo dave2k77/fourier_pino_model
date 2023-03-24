@@ -153,33 +153,32 @@ def train_and_evaluate(model, loss_fn, optimizer, num_epochs, physics_loss_coeff
 
     return mean_r2_score
 
-def plot_r2_vs_physics_loss_coefficients(physics_loss_coefficients, train_and_evaluate):
+def plot_r2_vs_physics_loss_coefficients(physics_loss_coefficients, train_and_evaluate, model, loss_fn, optimizer, num_epochs):
     r2_scores = []
-
     for coeff in physics_loss_coefficients:
-        r2 = train_and_evaluate(physics_loss_coefficient=coeff)
+        r2 = train_and_evaluate(model, loss_fn, optimizer, num_epochs, physics_loss_coefficient=coeff)
         r2_scores.append(r2)
 
-    plt.plot(physics_loss_coefficients, r2_scores, marker='o')
-    plt.xlabel('Physics Loss Coefficient')
-    plt.ylabel('R-squared Score')
-    plt.title('R-squared Score vs. Physics Loss Coefficient')
-    plt.grid()
+    plt.plot(physics_loss_coefficients, r2_scores)
+    plt.xlabel("Physics Loss Coefficient")
+    plt.ylabel("R2 Score")
+    plt.title("R2 Score vs. Physics Loss Coefficient")
     plt.show()
+
 
 def compare_solutions(predicted_solution, original_solution, error, time_index):
     plt.figure(figsize=(18, 6))
 
     plt.subplot(1, 3, 1)
     plt.title("Predicted Solution")
-    plt.imshow(predicted_solution[time_index].detach().cpu().numpy(), cmap='viridis', origin='lower')  # Add .cpu().numpy()
+    plt.imshow(np.abs(predicted_solution[time_index].detach().cpu().numpy()), cmap='viridis', origin='lower')  # Add .cpu().numpy()
 
     plt.subplot(1, 3, 2)
     plt.title("Original Solution")
-    plt.imshow(original_solution[time_index].detach().cpu().numpy(), cmap='viridis', origin='lower')  # Add .cpu().numpy()
+    plt.imshow(np.abs(original_solution[time_index].detach().cpu().numpy()), cmap='viridis', origin='lower')  # Add .cpu().numpy()
 
     plt.subplot(1, 3, 3)
     plt.title("Error")
-    plt.imshow(error[time_index].detach().cpu().numpy(), cmap='viridis', origin='lower')  # Add .cpu().numpy()
+    plt.imshow(np.abs(error[time_index][0]), cmap='viridis', origin='lower')  # Add .cpu().numpy()
 
     plt.show()

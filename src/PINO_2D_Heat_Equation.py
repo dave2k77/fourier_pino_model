@@ -72,5 +72,6 @@ if __name__ == "__main__":
     compare_solutions(predictions_test, predictions_test, error_np, time_index)
 
     physics_loss_coefficients = [0.001, 0.01, 0.1, 1.0, 3.0]
-    plot_r2_vs_physics_loss_coefficients(physics_loss_coefficients, train_and_evaluate)
+    plot_r2_vs_physics_loss_coefficients(physics_loss_coefficients, train_and_evaluate, model, loss_fn, optimizer, num_epochs)
+
 
