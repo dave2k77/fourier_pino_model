@@ -80,6 +80,8 @@ Solution of the 2D Heat Equations with alpha = 1 and initial temperature distrib
 Solution of the 2D Heat Equations with alpha = 1 and initial temperature distribution u(x, y, 0) = 50
 
 
+To create our dataset, we sampled the evolution for different initial temperature distributions storing each snapshot as a heatmap in png format. To create the target dataset, we saved the corresponding solutions (to each heatmap) as a .npz file.
+
 
 ## Building the PINO Model
 
@@ -214,4 +216,4 @@ The `decoder network` represents the Inverse Transform Layer that returns the ou
             return x_ifft
             
 
-The output from theis layer represents the predicted solution from the PINO.
+The output from theis layer represents the predicted solution from the PINO. The full code for the InverseTransformLayer is found here: [decoder]()
