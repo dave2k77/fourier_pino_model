@@ -72,7 +72,7 @@ if __name__ == "__main__":
                                                   num_epochs=num_epochs, physics_loss_coefficient=physics_loss_coefficient_B)
     plot_loss(train_loss_history, test_loss_history, save=True, save_path=r'graphs\train_test-phyloss-01.png')
 
-    time_index = 0  # Choose the time step you want to analyze
+    time_index = 5  # Choose the time step you want to analyze
 
     heatmaps_test, labels_test = next(iter(test_loader))
     heatmaps_test = heatmaps_test.to(device)
@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     compare_solutions(predictions_test, predictions_test, error_np, time_index)
 
-    physics_loss_coefficients = [0.001, 0.01, 0.1]
-    plot_r2_vs_physics_loss_coefficients(physics_loss_coefficients, train_and_evaluate, model, loss_fn, optimizer=optimizerB_2, num_epochs=num_epochs)
+    #physics_loss_coefficients = [0.001, 0.01, 0.1]
+    #plot_r2_vs_physics_loss_coefficients(physics_loss_coefficients, train_and_evaluate, model, loss_fn, optimizer=optimizerB_2, num_epochs=num_epochs)
 
 
