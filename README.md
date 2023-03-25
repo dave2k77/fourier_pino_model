@@ -88,6 +88,7 @@ The full code for the Fourier Transform Layer is found here: [encoder](https://g
 
 
 
+
 ### The neural operator network:
 
 This is the main part of the PINO. Its job is to learn the mapping between the PDE space and the latent solution space, and it the process learning the underlying physics of the problem. We implement the neural network operator as follows:
@@ -144,12 +145,40 @@ This is the main part of the PINO. Its job is to learn the mapping between the P
         return x
 
 
+
 The neural operator network consists of a series of fully connected hidden layers (`self.fc()`) activated by the GELU (Guassian Error Linear Units) activation (`self.gelu()`) function. 
 
-The data that comes in is a Complex Tensor (has real and imaginary parts), however, the GELU activation is defined only for real-valued inputs so the have to convert the data to a reaf-valued tensor (Float Tensor) before applying the GELU activation. 
+The data that comes in is a complex tensor (has real and imaginary parts), however, the GELU activation is defined only for real-valued inputs so the have to convert the data to a reaf-valued tensor (Float Tensor) before applying the GELU activation. 
 
 We then need to reshape and reconvert the real-valued tensor back to a complex tenesor before returning the ouput. The full code for the Neural Operator Layer can be found here: [neural_operator](https://github.com/dave2k77/fourier_pino_model/blob/master/src/neural_operator_layer.py)
 
 
 ### The decoder network:
 
+The `decoder network` represents the Inverse Transform Layer that returns the output of the neural operator (predicted solution) from the frequency domain to the spatial domain. It s does this by applying Pytorch's implementation of the Inverse Fourier Transform, `fft.ifft2()`, to the neural network's output. We implemented this layer as follows:
+
+
+    import torch
+    import torch.nn as nn
+
+    class InverseFourierTransformLayer(nn.Module):
+        """
+        This class implements a simple decoder neural network that returns 
+        the output from operator network from the frequency domain back to the 
+        the spatial domain using the 2d inverse fourier transform.
+        """
+
+        def __init__(self):
+
+            super(InverseFourierTransformLayer, self).__init__()
+
+
+        def forward(self, x):
+
+            # Perform 2D Inverse Fourier Transform
+            x_ifft = torch.fft.ifft2(x)
+
+            return x_ifft
+            
+
+The output from theis layer represents the predicted solution from the PINO.
