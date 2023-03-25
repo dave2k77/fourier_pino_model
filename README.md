@@ -311,7 +311,7 @@ To train the model, we do the following:
     plot_loss(train_loss_history, test_loss_history, save=True, save_path=r'graphs\train_test-phyloss-01.png')
 
 
-The details of the `train` function and the `loss_function` can be found in the [utility]() file.
+The details of the `train` function and the `loss_function` can be found in the [utility](https://github.com/dave2k77/fourier_pino_model/blob/master/src/utility_functions.py) file.
 
 
 ## Results
