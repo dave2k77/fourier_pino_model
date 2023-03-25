@@ -260,3 +260,59 @@ To training the PINO, we adapt the following hyperparameter strategy:
 
 ![](https://github.com/dave2k77/fourier_pino_model/blob/master/images/Hyperparameters.svg)
 
+To train the model, we do the following:
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    # Replace these paths with the correct ones for your dataset
+    heatmap_folder = r"images\heatmaps"
+    pde_solution_folder = r"images\pde_solutions"
+
+    # Initilise PINO 2D Heat Equation Model
+    model = PINO_2D_Heat_Equation()
+    model.to(device)
+
+    # Load training and test data
+    data = HeatmapPDEDataset(heatmap_folder, pde_solution_folder)
+    train_dataset, test_dataset = split_data(data)
+    train_loader = DataLoader(train_dataset, shuffle=True)
+    test_loader = DataLoader(test_dataset, shuffle=False)
+
+    # Set hyperparameters
+    num_epochs = 100  # options: 100, 250, 500
+
+    # physics loss coefficients
+    physics_loss_coefficient_A = 0.001
+    physics_loss_coefficient_B = 0.01 
+    physics_loss_coefficient_C = 0.1
+
+    # Learning Rates
+    lr_1 = 0.001
+    lr_2 = 0.005
+    lr_3 = 0.01
+
+    # Experiment A Optimizers
+    optimizerA_1 = optim.SGD(model.parameters(), lr=lr_1)
+    optimizerA_2 = optim.SGD(model.parameters(), lr=lr_2)
+    optimizerA_3 = optim.SGD(model.parameters(), lr=lr_3)
+
+    # Experiment B Optimzers
+    optimizerB_1 = optim.Adam(model.parameters(), lr=lr_1)
+    optimizerB_2 = optim.Adam(model.parameters(), lr=lr_2)
+    optimizerB_3 = optim.Adam(model.parameters(), lr=lr_3)
+    
+    # loss function
+    loss_fn = loss_function
+
+    # train the model
+    train_loss_history, test_loss_history, mean_r2_score = train(model=model, loss_fn=loss_fn, optimizer=optimizerB_2,
+                                                  train_loader=train_loader, test_loader=test_loader,
+                                                  num_epochs=num_epochs, physics_loss_coefficient=physics_loss_coefficient_B)
+    plot_loss(train_loss_history, test_loss_history, save=True, save_path=r'graphs\train_test-phyloss-01.png')
+
+
+The details of the `train` function and the `loss_function` can be found in the [utility]() file.
+
+
+## Results
+
