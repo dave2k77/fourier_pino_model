@@ -322,6 +322,11 @@ Training and test results for the PINO using the hyperparameter selection from E
 
 Graphs showing `training and test loss per epoch` againt `epoch` for Experiment A.
 
+![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/A1-TrainLoss.png)
+
+![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/A2-TrainLoss.png)
+
+![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/A3-TrainLoss.png)
 
 
 
@@ -330,4 +335,10 @@ Training and test results for the PINO using the hyperparameter selection from E
 ![](https://github.com/dave2k77/fourier_pino_model/blob/master/images/ExperimentB.svg)
 
 Graphs showing `training and test loss per epoch` againt `epoch` for Experiment B.
+
+![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/B1-TrainLoss.png)
+
+![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/B2-TrainLoss.png)
+
+![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/B3-TrainLoss.png)
 
