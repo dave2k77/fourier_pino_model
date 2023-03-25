@@ -25,7 +25,7 @@ The general architecture of our model consists of three major components:
 
 The diagram below shows the overall structure:
 
-
+[![Alt text]()](https://)
 
 The **_encoder network_** represents neural network that applies the fourier transform on the input data transforming it from the spatial domain to the frequency domain. 
 The purpos of doing this is to simplify computational requirements by reducing the complexity of the problem.
