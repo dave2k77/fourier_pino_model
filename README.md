@@ -144,8 +144,12 @@ This is the main part of the PINO. Its job is to learn the mapping between the P
         return x
 
 
-The neural operator network consists of a series of fully connected hidden layers (`self.fc()`) activated by the GELU (Guassian Error Linear Units) activation (`self.gelu()`) function. The data that comes in is a Complex Tensor (has real and imaginary parts), however, the GELU activation is defined only for real-valued inputs so the have to convert the data to a reaf-valued tensor (Float Tensor) before applying the GELU activation. 
+The neural operator network consists of a series of fully connected hidden layers (`self.fc()`) activated by the GELU (Guassian Error Linear Units) activation (`self.gelu()`) function. 
 
-We then need to reshape and reconvert the real-valued tensor back to a complex tenesor before returning the ouput.
+The data that comes in is a Complex Tensor (has real and imaginary parts), however, the GELU activation is defined only for real-valued inputs so the have to convert the data to a reaf-valued tensor (Float Tensor) before applying the GELU activation. 
 
-The full code for the Neural Operator Layer can be found here: [neural_operator]()
+We then need to reshape and reconvert the real-valued tensor back to a complex tenesor before returning the ouput. The full code for the Neural Operator Layer can be found here: [neural_operator](https://github.com/dave2k77/fourier_pino_model/blob/master/src/neural_operator_layer.py)
+
+
+### The decoder network:
+
