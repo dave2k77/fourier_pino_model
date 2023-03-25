@@ -216,4 +216,7 @@ The `decoder network` represents the Inverse Transform Layer that returns the ou
             return x_ifft
             
 
-The output from theis layer represents the predicted solution from the PINO. The full code for the InverseTransformLayer is found here: [decoder]()
+The output from theis layer represents the predicted solution from the PINO. The full code for the InverseTransformLayer is found here: [decoder](https://github.com/dave2k77/fourier_pino_model/blob/master/src/inverse_transform_layer.py)
+
+
+
