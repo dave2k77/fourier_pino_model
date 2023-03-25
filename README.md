@@ -77,7 +77,7 @@ Solution of the 2D Heat Equations with alpha = 1 and initial temperature distrib
 
 ![](https://github.com/dave2k77/fourier_pino_model/blob/master/movies/heat_equation_solution_alpha10_u50.gif)
 
-Solution of the 2D Heat Equations with alpha = 1 and initial temperature distribution $$u(x, y, 0) = 50
+Solution of the 2D Heat Equations with alpha = 1 and initial temperature distribution u(x, y, 0) = 50
 
 
 
