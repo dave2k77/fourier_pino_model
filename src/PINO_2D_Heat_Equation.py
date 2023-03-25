@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -72,7 +73,7 @@ if __name__ == "__main__":
                                                   num_epochs=num_epochs, physics_loss_coefficient=physics_loss_coefficient_B)
     plot_loss(train_loss_history, test_loss_history, save=True, save_path=r'graphs\train_test-phyloss-01.png')
 
-    time_index = 5  # Choose the time step you want to analyze
+    time_index = 0  # Choose the time step you want to analyze
 
     heatmaps_test, labels_test = next(iter(test_loader))
     heatmaps_test = heatmaps_test.to(device)
