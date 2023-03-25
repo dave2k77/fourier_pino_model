@@ -48,6 +48,11 @@ The `dataset_preprocess.py` file contains the `HeatmapPDEDataset` class that tak
 The file also contains the function `split_data()` that takes in the formatted dataset produced by the `HeatmapPDEDataset` class and splits it into training and test datasets which can be used to create dataloaders for the PINO model.
 
 
+## Creating the Dataset
+
+We used the Finite Difference Method to
+
+
 ## Building the PINO Model
 
 ### The encoder:
