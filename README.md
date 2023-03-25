@@ -254,3 +254,7 @@ Notice that the `__init__` function initialises all the layers of the PINO. Once
 
 ## Training the PINO Model
 
+To carry out the training process, we implemented a number of utility functions to help with data plotting, defining the loss function,  calculating accuracy scores, and implementing the training function. The full code can be found here: [utility](https://github.com/dave2k77/fourier_pino_model/blob/master/src/utility_functions.py)
+
+To training the PINO, we adapt the following hyperparameter strategy:
+
