@@ -58,11 +58,28 @@ In order to analysis the temperature change of the rectangular region as time ev
 
 ![Alt text](https://github.com/dave2k77/fourier_pino_model/blob/master/images/DiscretisationStrategy.svg)
 
-where each $$(x, y)$$ coordinate represents a grid point in the domain.
+where each (x, y) coordinate represents a grid point in the domain.
 
-We then used the Finite Difference Approximation Scheme (show below), we can compute the temperature at finitely many points in the rectangular domain and use it to paint a picture of how the heat energy diffuses throughout the domain as time evolves. The result of this process for different initial conditions are shown below:
+We then used the Finite Difference Approximation Scheme (show below), we can compute the temperature at finitely many points in the rectangular domain and use it to paint a picture of how the heat energy diffuses throughout the domain as time evolves. 
 
-![Alt text](https://github.com/dave2k77/fourier_pino_model/blob/master/images/)
+![image](https://user-images.githubusercontent.com/30156495/227734579-3670a692-49b9-4b76-bb1c-6de515ec3af5.png)
+
+
+The result of this process for different initial conditions are shown below:
+
+![](https://github.com/dave2k77/fourier_pino_model/blob/master/movies/heat_equation_solution_alpha10.gif)
+
+Solution of the 2D Heat Equations with alpha = 1 and initial temperature distribution u(x, y, 0) = 0
+
+![](https://github.com/dave2k77/fourier_pino_model/blob/master/movies/heat_equation_solution_alpha10_u25.gif)
+
+Solution of the 2D Heat Equations with alpha = 1 and initial temperature distribution u(x, y, 0) = 25
+
+![](https://github.com/dave2k77/fourier_pino_model/blob/master/movies/heat_equation_solution_alpha10_u50.gif)
+
+Solution of the 2D Heat Equations with alpha = 1 and initial temperature distribution $$u(x, y, 0) = 50
+
+
 
 ## Building the PINO Model
 
