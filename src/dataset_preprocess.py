@@ -10,6 +10,13 @@ heatmap_folder = r"images\heatmaps"
 pde_solution_folder = r"images\pde_solutions"
 
 class HeatmapPDEDataset(Dataset):
+    """
+    This class takes the paths for the input data and the associated targets and does the following:
+    1) resizes the heatmap images and normalise them
+    2) transform the resized heatmaps (PDE) in png format to a tensor format
+    3) converts the PDE solutions in NumPy's .npz format, reshapes and resizes them 
+    4) converts the processed PDE solutions to tensor format. 
+    """
     def __init__(self, heatmap_folder, pde_solution_folder, transform=None):
         self.heatmap_folder = heatmap_folder
         self.pde_solution_folder = pde_solution_folder
@@ -44,6 +51,9 @@ class HeatmapPDEDataset(Dataset):
 
 
 def split_data(dataset, test_size=0.2, random_state=42):
+    """
+    Splits the dataset into training and test datasets.
+    """
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
     split = int(np.floor(test_size * dataset_size))
@@ -58,6 +68,7 @@ def split_data(dataset, test_size=0.2, random_state=42):
 
     return train_dataset, test_dataset
 
+# Create the train and test dataloaders
 dataset = HeatmapPDEDataset(heatmap_folder, pde_solution_folder)
 train_dataset, test_dataset = split_data(dataset)
 
