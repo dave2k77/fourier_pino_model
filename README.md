@@ -41,5 +41,5 @@ The convoluitonal neural network (CNN) was intended to compare the predictions o
 
 ## Data Preprocessing
 
-We used a number of helper functions to transform the input data into a format that can easily be used by the PINO model. These helper functions can be found in the `data_preprocess` file found here: [data_preprocess](https://github.com/dave2k77/fourier_pino_model/blob/master/src/data_preprocess.py)
+We used a number of helper functions to transform the input data into a format that can easily be used by the PINO model. These helper functions can be found in the `data_preprocess` file found here: [data_preprocess](https://github.com/dave2k77/fourier_pino_model/blob/master/src/dataset_preprocess.py)
 
