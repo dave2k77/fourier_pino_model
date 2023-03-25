@@ -50,8 +50,19 @@ The file also contains the function `split_data()` that takes in the formatted d
 
 ## Creating the Dataset
 
-We used the Finite Difference Method to
+Consider the following scenario where we have a rectangular region with a hot edge (100 degrees celsius) and all other edges remaining cold at 0 degrees celsius.
 
+![Alt text](https://github.com/dave2k77/fourier_pino_model/blob/master/images/HeatTransferDomain.svg)
+
+In order to analysis the temperature change of the rectangular region as time evolves, we need to access or sample various points in the rectangular region. To do this, we can discretise the rectangular domain using the following scheme:
+
+![Alt text](https://github.com/dave2k77/fourier_pino_model/blob/master/images/DiscretisationStrategy.svg)
+
+where each $$(x, y)$$ coordinate represents a grid point in the domain.
+
+We then used the Finite Difference Approximation Scheme (show below), we can compute the temperature at finitely many points in the rectangular domain and use it to paint a picture of how the heat energy diffuses throughout the domain as time evolves. The result of this process for different initial conditions are shown below:
+
+![Alt text](https://github.com/dave2k77/fourier_pino_model/blob/master/images/)
 
 ## Building the PINO Model
 
