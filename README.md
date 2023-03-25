@@ -258,3 +258,5 @@ To carry out the training process, we implemented a number of utility functions 
 
 To training the PINO, we adapt the following hyperparameter strategy:
 
+![](https://github.com/dave2k77/fourier_pino_model/blob/master/images/Hyperparameters.svg)
+
