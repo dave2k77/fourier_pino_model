@@ -1,8 +1,8 @@
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from dataset_builder import HeatmapPDEDataset, split_data
-from preprocess import *
+from dataset_preprocess import HeatmapPDEDataset, split_data
+from utility_functions import *
 from fourier_transform_layer import FourierTransformLayer
 from inverse_transform_layer import InverseFourierTransformLayer
 from neural_operator_layer import NeuralOperator
