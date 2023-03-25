@@ -80,7 +80,8 @@ Solution of the 2D Heat Equations with alpha = 1 and initial temperature distrib
 Solution of the 2D Heat Equations with alpha = 1 and initial temperature distribution u(x, y, 0) = 50
 
 
-To create our dataset, we sampled the evolution for different initial temperature distributions storing each snapshot as a heatmap in png format. To create the target dataset, we saved the corresponding solutions (to each heatmap) as a .npz file.
+To create our dataset, we sampled the evolution for different initial temperature distributions storing each snapshot as a heatmap in png format. To create the target dataset, we saved the corresponding solutions (to each heatmap) as a .npz file. The code for generating the dataset can be found here: [fdm_data_generator](https://github.com/dave2k77/fourier_pino_model/blob/master/src/fdm_2d_heat_eqn.py)
+
 
 
 ## Building the PINO Model
@@ -219,4 +220,37 @@ The `decoder network` represents the Inverse Transform Layer that returns the ou
 The output from theis layer represents the predicted solution from the PINO. The full code for the InverseTransformLayer is found here: [decoder](https://github.com/dave2k77/fourier_pino_model/blob/master/src/inverse_transform_layer.py)
 
 
+## Building the PINO
+
+Now that we have our dataset formatted and ready, and all the layes of our PINO model are built, it is now time to put everything together and assemble our PINO model. The implementation is shown below:
+
+
+    import torch.nn as nn
+    import torch.optim as optim
+    from torch.utils.data import DataLoader
+    from dataset_builder import HeatmapPDEDataset, split_data
+    from preprocess import *
+    from fourier_transform_layer import FourierTransformLayer
+    from inverse_transform_layer import InverseFourierTransformLayer
+    from neural_operator_layer import NeuralOperator
+
+
+    class PINO_2D_Heat_Equation(nn.Module):
+        def __init__(self):
+            super(PINO_2D_Heat_Equation, self).__init__()
+            self.encoder = FourierTransformLayer()
+            self.neural_operator = NeuralOperator()
+            self.decoder = InverseFourierTransformLayer()
+
+        def forward(self, x):
+            x = self.encoder(x)  # returns x: complex float
+            x = self.neural_operator(x)
+            x = self.decoder(x)
+            return x
+
+
+Notice that the `__init__` function initialises all the layers of the PINO. Once data is pass to the PINO model, the data will be pushed thorugh each layer by the `forward` function before returning the output. This output is the predicted solution to the PDE.
+
+
+## Training the PINO Model
 
