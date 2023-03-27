@@ -52,30 +52,32 @@ The file also contains the function `split_data()` that takes in the formatted d
 
 Consider the following scenario where we have a rectangular region with a hot edge (100 degrees celsius) and all other edges remaining cold at 0 degrees celsius.
 
-![Alt text](https://github.com/dave2k77/fourier_pino_model/blob/master/images/HeatTransferDomain.svg)
+
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/images/HeatTransferDomain.svg"  width=50% height=50%>
 
 In order to analysis the temperature change of the rectangular region as time evolves, we need to access or sample various points in the rectangular region. To do this, we can discretise the rectangular domain using the following scheme:
 
-![Alt text](https://github.com/dave2k77/fourier_pino_model/blob/master/images/DiscretisationStrategy.svg)
+![image](https://user-images.githubusercontent.com/30156495/227839561-5f7168af-8173-4005-982e-8eca6ea6d1ed.png)
 
 where each (x, y) coordinate represents a grid point in the domain.
 
 We then used the Finite Difference Approximation Scheme (show below), we can compute the temperature at finitely many points in the rectangular domain and use it to paint a picture of how the heat energy diffuses throughout the domain as time evolves. 
 
-![image](https://user-images.githubusercontent.com/30156495/227734579-3670a692-49b9-4b76-bb1c-6de515ec3af5.png)
+<img src="https://user-images.githubusercontent.com/30156495/227734579-3670a692-49b9-4b76-bb1c-6de515ec3af5.png"  width=50% height=50%>
+
 
 
 The result of this process for different initial conditions are shown below:
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/movies/heat_equation_solution_alpha10.gif)
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/movies/heat_equation_solution_alpha10.gif"  width=50% height=50%>
 
 Solution of the 2D Heat Equations with alpha = 1 and initial temperature distribution u(x, y, 0) = 0
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/movies/heat_equation_solution_alpha10_u25.gif)
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/movies/heat_equation_solution_alpha10_u25.gif"  width=50% height=50%>
 
 Solution of the 2D Heat Equations with alpha = 1 and initial temperature distribution u(x, y, 0) = 25
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/movies/heat_equation_solution_alpha10_u50.gif)
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/movies/heat_equation_solution_alpha10_u50.gif"  width=50% height=50%>
 
 Solution of the 2D Heat Equations with alpha = 1 and initial temperature distribution u(x, y, 0) = 50
 
@@ -258,7 +260,8 @@ To carry out the training process, we implemented a number of utility functions 
 
 To training the PINO, we adapt the following hyperparameter strategy:
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/images/Hyperparameters.svg)
+<img src="https://user-images.githubusercontent.com/30156495/227839349-14b1656e-5f75-4675-ae82-8385d7577137.png"  width=70% height=60%>
+
 
 To train the model, we do the following:
 
@@ -318,27 +321,26 @@ The details of the `train` function and the `loss_function` can be found in the 
 
 Training and test results for the PINO using the hyperparameter selection from Experiment A
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/images/ExperimentA.svg)
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/images/ExperimentA.svg"  width=60% height=50%>
 
 Graphs showing `training and test loss per epoch` againt `epoch` for Experiment A.
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/A1-TrainLoss.png)
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/A1-TrainLoss.png"  width=60% height=50%>
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/A2-TrainLoss.png)
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/A2-TrainLoss.png"  width=60% height=50%>
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/A3-TrainLoss.png)
-
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/A3-TrainLoss.png"  width=60% height=50%>
 
 
 Training and test results for the PINO using the hyperparameter selection from Experiment B
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/images/ExperimentB.svg)
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/images/ExperimentB.svg"  width=60% height=50%>
 
 Graphs showing `training and test loss per epoch` againt `epoch` for Experiment B.
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/B1-TrainLoss.png)
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/B1-TrainLoss.png"  width=60% height=50%>
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/B2-TrainLoss.png)
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/B2-TrainLoss.png"  width=60% height=50%>
 
-![](https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/B3-TrainLoss.png)
+<img src="https://github.com/dave2k77/fourier_pino_model/blob/master/graphs/B3-TrainLoss.png"  width=60% height=50%>
 
