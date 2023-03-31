@@ -32,6 +32,7 @@ class HeatmapPDEDataset(Dataset):
         heatmap_path = os.path.join(self.heatmap_folder, self.heatmap_files[idx])
         pde_solution_path = os.path.join(self.pde_solution_folder, self.pde_solution_files[idx])
 
+        # resize and convert each heatmap image to a greysclate 64 x 64 pixit image.
         heatmap = Image.open(heatmap_path).convert('L').resize((64, 64), Image.ANTIALIAS)
 
         if self.transform:
