@@ -2,17 +2,8 @@
 
 ## Introduction
 
-Partial Differential Equations (PDEs) serve as a mathematical bedrock for modelling physical processes, but solving intricate PDEs via traditional numerical 
-simulations can be computationally burdensome and limited in capturing inherent randomness. Neural networks present an alternative for addressing physical problems, 
-yet often demand extensive training data produced by expensive simulations. Physics-Informed Neural Networks (PINNs) offer a promising surrogate model, merging 
-numerical simulation techniques with neural networks and showcasing exceptional accuracy and efficiency in solving parameterised PDEs, even amidst incomplete data 
-or ill-posed problems. Nevertheless, PINNs encounter challenges in complex scenarios involving multi-physics, hyperparameter modification, and model generalisation.
-
-This article introduces a cutting-edge approach based on Physics-Informed Neural Operators (PINOs), incorporating Fourier analysis methods into the PINO framework, 
-coupled with a bespoke loss function that amalgamates residual loss from the neural operator network and loss from enforcing physical conservation laws governing PDEs, 
-as well as Fourier-based derivatives and a physics loss coefficient. Capitalising on the strengths of numerical algorithms to generate training data and visualise 
-experimental outcomes, we propose an innovative PINO framework design and provide an exhaustive comparative analysis exploring the influence of varying the physics 
-loss coefficient on the performance of PINO models for PDE resolution.
+Partial Differential Equations (PDEs) are a mathematical bedrock for modelling physical processes. However, solving intricate PDEs via traditional numerical simulations can be computationally burdensome and limited in capturing inherent randomness. Neural networks present an alternative for addressing physical problems, yet often demand extensive training data produced by expensive simulations. Physics-Informed Neural Networks (PINNs) offer a promising surrogate model, merging numerical simulation techniques with neural networks and showcasing exceptional accuracy and efficiency in solving parameterised PDEs, even amidst incomplete data or ill-posed problems. Nevertheless, PINNs encounter challenges in complex scenarios involving multi-physics, hyperparameter modification, and model generalisation.
+This article introduces a cutting-edge approach based on Physics-Informed Neural Operators (PINOs), incorporating Fourier analysis methods into the PINO framework, coupled with a bespoke loss function that amalgamates residual loss from the neural operator network and loss from enforcing physical conservation laws governing PDEs, as well as Fourier-based derivatives and a physics loss coefficient. Capitalising on the strengths of numerical algorithms to generate training data and visualise experimental outcomes, we propose an innovative PINO framework design and provide an exhaustive comparative analysis exploring the influence of varying the physics loss coefficient on the performance of PINO models for PDE resolution.
 
 
 ## Model Architecture
