@@ -14,6 +14,12 @@ help:
 	@echo "  docs         - Generate documentation"
 	@echo "  run-example  - Run basic usage example"
 	@echo "  train        - Train model with default settings"
+	@echo ""
+	@echo "Baseline Reproduction:"
+	@echo "  baseline-test        - Test baseline reproduction setup"
+	@echo "  baseline-reproduce   - Run full baseline reproduction"
+	@echo "  baseline-reproduce-single - Run single experiment (B2)"
+	@echo "  validate-baseline    - Quick validation of baseline"
 
 # Install dependencies
 install:
@@ -74,6 +80,20 @@ train-exp-a:
 # Run experiment B
 train-exp-b:
 	python train_pino.py --config experiment_b --verbose
+
+# Baseline reproduction
+baseline-test:
+	python scripts/test_baseline.py
+
+baseline-reproduce:
+	python scripts/reproduce_baseline.py
+
+baseline-reproduce-single:
+	python scripts/reproduce_baseline.py --experiment experiment_b2
+
+# Quick validation
+validate-baseline: baseline-test
+	@echo "Baseline validation completed"
 
 # Check code quality
 check: lint test

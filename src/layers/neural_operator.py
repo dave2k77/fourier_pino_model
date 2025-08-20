@@ -91,6 +91,10 @@ class NeuralOperator(nn.Module):
         # Convert the real-valued tensor back to a complex tensor
         x_complex = torch.view_as_complex(x_out)
         
+        # Ensure output has the correct shape (batch_size, channels, height, width)
+        if x_complex.dim() == 3:
+            x_complex = x_complex.unsqueeze(1)  # Add channel dimension
+        
         return x_complex
     
     def get_layer_info(self) -> dict:

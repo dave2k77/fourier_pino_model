@@ -55,10 +55,10 @@ def fourier_derivative_2d(input_tensor: torch.Tensor, axis: int = 0) -> torch.Te
     return derivative
 
 
-def energy_conservation_loss(output: torch.Tensor, target: torch.Tensor, 
+def energy_conservation_loss(output: torch.Tensor, target: torch.Tensor,
                            dx: float = 1.0, dy: float = 1.0, alpha: float = 0.1) -> torch.Tensor:
     """
-    Compute energy conservation loss for the heat equation.
+    Compute simplified energy conservation loss for the heat equation.
     
     Args:
         output: Model output tensor
@@ -70,35 +70,31 @@ def energy_conservation_loss(output: torch.Tensor, target: torch.Tensor,
     Returns:
         Energy conservation loss
     """
-    dt = dx ** 2 / (4 * alpha)
+    # Simplified physics loss: just compare the spatial gradients
+    # This is a baseline implementation for testing
     
-    # Calculate time derivative error
-    time_derivative_error = torch.abs(
-        (output[:, 1:] - output[:, :-1]) / dt - 
-        (target[:, 1:] - target[:, :-1]) / dt
-    )
-    
-    # Calculate spatial derivative errors
+    # Calculate spatial gradients using finite differences
     batch_size = output.size(0)
-    x_derivative_error = torch.zeros_like(time_derivative_error)
-    y_derivative_error = torch.zeros_like(time_derivative_error)
+    total_loss = 0.0
     
     for i in range(batch_size):
-        x_derivative_error[i] = torch.abs(
-            fourier_derivative_2d(output[i, :-1], axis=0) - 
-            fourier_derivative_2d(target[i, :-1], axis=0)
-        )
-        y_derivative_error[i] = torch.abs(
-            fourier_derivative_2d(output[i, :-1], axis=1) - 
-            fourier_derivative_2d(target[i, :-1], axis=1)
-        )
+        # Get 2D slices (remove channel dimension)
+        output_2d = output[i, 0]  # Shape: (H, W)
+        target_2d = target[i, 0]  # Shape: (H, W)
+        
+        # Calculate gradients using finite differences
+        output_grad_x = torch.diff(output_2d, dim=0, prepend=output_2d[0:1, :])
+        output_grad_y = torch.diff(output_2d, dim=1, prepend=output_2d[:, 0:1])
+        target_grad_x = torch.diff(target_2d, dim=0, prepend=target_2d[0:1, :])
+        target_grad_y = torch.diff(target_2d, dim=1, prepend=target_2d[:, 0:1])
+        
+        # Physics loss: gradient consistency
+        grad_loss = torch.mean((output_grad_x - target_grad_x) ** 2 + 
+                              (output_grad_y - target_grad_y) ** 2)
+        
+        total_loss += grad_loss
     
-    # Energy conservation law error
-    energy_law_error = (
-        (time_derivative_error - alpha * (x_derivative_error + y_derivative_error)) ** 2
-    ).mean()
-    
-    return energy_law_error
+    return total_loss / batch_size
 
 
 def loss_function(output: torch.Tensor, target: torch.Tensor, 

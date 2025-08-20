@@ -96,12 +96,36 @@ class HeatmapPDEDataset(Dataset):
         # Load PDE solution
         pde_path = self.pde_files[idx]
         pde_data = np.load(pde_path)
-        pde_solution = pde_data['solution'] if 'solution' in pde_data else pde_data['arr_0']
+        # Try different possible keys for the solution data
+        if 'solution' in pde_data:
+            pde_solution = pde_data['solution']
+        elif 'u' in pde_data:
+            pde_solution = pde_data['u']
+        elif 'arr_0' in pde_data:
+            pde_solution = pde_data['arr_0']
+        else:
+            # If no expected key, try the first available key
+            available_keys = list(pde_data.keys())
+            if available_keys:
+                pde_solution = pde_data[available_keys[0]]
+            else:
+                raise ValueError(f"No data found in {pde_path}")
+        
         pde_tensor = torch.from_numpy(pde_solution).float()
         
-        # Ensure PDE solution has correct shape
+        # Ensure PDE solution has correct shape and size
         if pde_tensor.dim() == 2:
             pde_tensor = pde_tensor.unsqueeze(0)  # Add channel dimension
+        
+        # Resize PDE solution to match the expected output size
+        if pde_tensor.shape[-2:] != self.transform_size:
+            # Use interpolation to resize the tensor
+            pde_tensor = torch.nn.functional.interpolate(
+                pde_tensor.unsqueeze(0),  # Add batch dimension for interpolation
+                size=self.transform_size,
+                mode='bilinear',
+                align_corners=False
+            ).squeeze(0)  # Remove batch dimension
         
         return heatmap_tensor, pde_tensor
     
