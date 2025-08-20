@@ -1,0 +1,4 @@
+Experiment,Optimizer,Learning Rate,Physics Loss Coeff,Batch Size,Epochs,Final R² Score,Final Train Loss,Final Test Loss,Best Loss,Training Time (s),Convergence Epoch
+low_physics_a,Adam,0.001,0.0001,64,150,0.4171,152.1697,155.2919,155.2919,224.56,81
+medium_physics_a,Adam,0.002,0.005,64,150,0.7495,10.7926,7.4287,7.1113,404.64,141
+advanced_adamw,AdamW,0.001,0.01,64,200,0.6037,109.1118,112.4704,112.4704,527.62,200

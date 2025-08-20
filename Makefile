@@ -14,6 +14,17 @@ help:
 	@echo "  docs         - Generate documentation"
 	@echo "  run-example  - Run basic usage example"
 	@echo "  train        - Train model with default settings"
+	@echo "  train-custom - Train with custom parameters"
+	@echo "  train-exp-a  - Run Experiment A (low physics loss)"
+	@echo "  train-exp-b  - Run Experiment B (high physics loss)"
+	@echo ""
+	@echo "Enhanced Training:"
+	@echo "  train-enhanced       - Run all enhanced experiments"
+	@echo "  train-enhanced-single - Run single enhanced experiment"
+	@echo "  train-enhanced-low   - Run low physics loss experiments"
+	@echo "  train-enhanced-medium - Run medium physics loss experiments"
+	@echo "  train-enhanced-high  - Run high physics loss experiments"
+	@echo "  train-enhanced-advanced - Run advanced optimizer experiments"
 	@echo ""
 	@echo "Baseline Reproduction:"
 	@echo "  baseline-test        - Test baseline reproduction setup"
@@ -94,6 +105,36 @@ baseline-reproduce-single:
 # Quick validation
 validate-baseline: baseline-test
 	@echo "Baseline validation completed"
+
+# Enhanced training commands
+train-enhanced: ## Run all enhanced training experiments
+	@echo "Running enhanced training experiments..."
+	python scripts/enhanced_training.py
+
+train-enhanced-single: ## Run a single enhanced experiment
+	@echo "Running single enhanced experiment..."
+	@read -p "Enter experiment name: " exp_name; \
+	python scripts/enhanced_training.py --experiment $$exp_name
+
+train-enhanced-low: ## Run low physics loss enhanced experiments
+	@echo "Running low physics loss enhanced experiments..."
+	python scripts/enhanced_training.py --experiment low_physics_a
+	python scripts/enhanced_training.py --experiment low_physics_b
+
+train-enhanced-medium: ## Run medium physics loss enhanced experiments
+	@echo "Running medium physics loss enhanced experiments..."
+	python scripts/enhanced_training.py --experiment medium_physics_a
+	python scripts/enhanced_training.py --experiment medium_physics_b
+
+train-enhanced-high: ## Run high physics loss enhanced experiments
+	@echo "Running high physics loss enhanced experiments..."
+	python scripts/enhanced_training.py --experiment high_physics_a
+	python scripts/enhanced_training.py --experiment high_physics_b
+
+train-enhanced-advanced: ## Run advanced optimizer experiments
+	@echo "Running advanced optimizer experiments..."
+	python scripts/enhanced_training.py --experiment advanced_sgd
+	python scripts/enhanced_training.py --experiment advanced_adamw
 
 # Check code quality
 check: lint test
