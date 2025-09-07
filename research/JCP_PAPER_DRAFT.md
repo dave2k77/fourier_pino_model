@@ -113,16 +113,16 @@ We define a fractional neural operator as a mapping between function spaces that
 
 **Definition 1**: A fractional neural operator is a mapping G_α: L²(Ω) → L²(Ω) defined as:
 
-G_α[u](x) = ∫_Ω K_α(x,y) u(y) dy
+$$G_α[u](x) = ∫_Ω K_α(x,y) u(y) dy$$
 
-where K_α(x,y) is a fractional kernel corresponding to the fractional derivative method α.
+where $K_α(x,y)$ is a fractional kernel corresponding to the fractional derivative method α.
 
-The fractional kernel K_α(x,y) depends on the specific fractional derivative definition:
+The fractional kernel $K_α(x,y)$ depends on the specific fractional derivative definition:
 
-- **Caputo**: K_α(x,y) = (1/Γ(1-α)) (x-y)^(-α)
-- **Riemann-Liouville**: K_α(x,y) = (1/Γ(1-α)) (x-y)^(-α)
-- **Caputo-Fabrizio**: K_α(x,y) = (M(α)/(1-α)) exp(-α(x-y)/(1-α))
-- **Atangana-Baleanu**: K_α(x,y) = (AB(α)/(1-α)) E_α(-α(x-y)^α/(1-α))
+- **Caputo**: $K_α(x,y) = (1/Γ(1-α)) (x-y)^(-α)$
+- **Riemann-Liouville**: $K_α(x,y) = (1/Γ(1-α)) (x-y)^(-α)$
+- **Caputo-Fabrizio**: $K_α(x,y) = (M(α)/(1-α)) exp(-α(x-y)/(1-α))$
+- **Atangana-Baleanu**: $K_α(x,y) = (AB(α)/(1-α)) E_α(-α(x-y)^α/(1-α))$
 
 #### 3.1.2 Multi-Method Framework
 
