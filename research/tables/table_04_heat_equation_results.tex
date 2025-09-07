@@ -1,0 +1,16 @@
+\begin{table}[H]
+\centering
+\caption{Fractional Heat Equation Results}
+\label{tab:heat_equation_results}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Method & L2 Error & L∞ Error & Training Time (s) & Memory (GB) \\
+\midrule
+Traditional PINN & $2.3 \times 10^{-2}$ & $4.1 \times 10^{-2}$ & 1,200 & 2.1 \\
+FNO & $1.8 \times 10^{-2}$ & $3.2 \times 10^{-2}$ & 800 & 1.8 \\
+PINO & $1.5 \times 10^{-2}$ & $2.8 \times 10^{-2}$ & 900 & 1.9 \\
+fPINN & $1.2 \times 10^{-2}$ & $2.1 \times 10^{-2}$ & 1,500 & 2.3 \\
+\textbf{FractionalPINO} & \textbf{$6.8 \times 10^{-3}$} & \textbf{$1.2 \times 10^{-2}$} & \textbf{750} & \textbf{1.6} \\
+\bottomrule
+\end{tabular}
+\end{table}

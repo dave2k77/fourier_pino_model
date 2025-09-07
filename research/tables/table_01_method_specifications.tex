@@ -1,0 +1,19 @@
+\begin{table}[H]
+\centering
+\caption{Fractional Derivative Method Specifications}
+\label{tab:method_specifications}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Method & Kernel Function & Numerical Stability & Computational Cost \\
+\midrule
+Caputo & $\frac{1}{\Gamma(1-\alpha)} (x-y)^{-\alpha}$ & Good & $\mathcal{O}(N^2)$ \\
+Riemann-Liouville & $\frac{1}{\Gamma(1-\alpha)} (x-y)^{-\alpha}$ & Good & $\mathcal{O}(N^2)$ \\
+Caputo-Fabrizio & $\frac{M(\alpha)}{1-\alpha} \exp\left(-\frac{\alpha(x-y)}{1-\alpha}\right)$ & Excellent & $\mathcal{O}(N \log N)$ \\
+Atangana-Baleanu & $\frac{AB(\alpha)}{1-\alpha} E_\alpha\left(-\frac{\alpha(x-y)^\alpha}{1-\alpha}\right)$ & Excellent & $\mathcal{O}(N \log N)$ \\
+Weyl & $\frac{1}{\Gamma(-\alpha)} \int_x^\infty \frac{f(t)}{(t-x)^{\alpha+1}} dt$ & Good & $\mathcal{O}(N^2)$ \\
+Marchaud & $\frac{\alpha}{\Gamma(1-\alpha)} \int_0^\infty \frac{f(x) - f(x-t)}{t^{\alpha+1}} dt$ & Good & $\mathcal{O}(N^2)$ \\
+Hadamard & $\frac{1}{\Gamma(n-\alpha)} \left(x \frac{d}{dx}\right)^n \int_a^x \frac{f(t)}{(\ln(x/t))^{\alpha-n+1}} \frac{dt}{t}$ & Good & $\mathcal{O}(N^2)$ \\
+Reiz-Feller & $\frac{1}{\Gamma(1-\alpha)} \int_0^\infty \frac{f(x-t) - f(x+t)}{t^\alpha} dt$ & Good & $\mathcal{O}(N^2)$ \\
+\bottomrule
+\end{tabular}
+\end{table}

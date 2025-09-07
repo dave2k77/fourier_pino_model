@@ -1,9 +1,62 @@
-torch>=1.9.0
-torchvision>=0.10.0
-numpy>=1.21.0
-matplotlib>=3.4.0
-scikit-learn>=1.0.0
-Pillow>=8.3.0
-tqdm>=4.62.0
-seaborn>=0.11.0
-pandas>=1.3.0
+# Core Dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+scikit-learn>=1.3.0
+Pillow>=10.0.0
+tqdm>=4.65.0
+seaborn>=0.12.0
+pandas>=2.0.0
+
+# Fractional Calculus and High-Performance Computing
+hpfracc>=1.0.0  # Your fractional calculus library
+scipy>=1.11.0
+numba>=0.58.0
+cupy-cuda12x>=12.0.0  # GPU acceleration for fractional operations
+
+# Machine Learning and Neural Networks
+tensorboard>=2.13.0
+wandb>=0.15.0  # Experiment tracking
+optuna>=3.3.0  # Hyperparameter optimization
+hydra-core>=1.3.0  # Configuration management
+
+# Scientific Computing
+sympy>=1.12  # Symbolic mathematics for fractional calculus
+networkx>=3.1  # Graph theory for neural networks
+scikit-image>=0.21.0
+
+# Data Processing and Visualization
+plotly>=5.15.0
+bokeh>=3.2.0
+jupyter>=1.0.0
+ipywidgets>=8.0.0
+
+# Development and Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.7.0
+flake8>=6.0.0
+mypy>=1.5.0
+pre-commit>=3.3.0
+
+# Documentation
+sphinx>=7.1.0
+sphinx-rtd-theme>=1.3.0
+nbsphinx>=0.9.0
+
+# Performance and Profiling
+memory-profiler>=0.61.0
+line-profiler>=4.1.0
+py-spy>=0.3.14
+
+# Additional Scientific Libraries
+h5py>=3.9.0  # HDF5 support for large datasets
+zarr>=2.16.0  # Array storage
+dask>=2023.7.0  # Parallel computing
+joblib>=1.3.0  # Parallel processing
+
+# Optional: Advanced ML Libraries
+# transformers>=4.33.0  # For transformer-based extensions
+# timm>=0.9.0  # Computer vision models
+# einops>=0.7.0  # Tensor operations

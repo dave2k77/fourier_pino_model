@@ -1,0 +1,87 @@
+name: fractional-pino
+channels:
+  - conda-forge
+  - pytorch
+  - nvidia
+  - defaults
+
+dependencies:
+  # Python
+  - python=3.11
+  
+  # Core Scientific Computing
+  - numpy>=1.24.0
+  - scipy>=1.11.0
+  - matplotlib>=3.7.0
+  - pandas>=2.0.0
+  - scikit-learn>=1.3.0
+  
+  # PyTorch Ecosystem (with CUDA support)
+  - pytorch>=2.0.0
+  - torchvision>=0.15.0
+  - torchaudio>=2.0.0
+  - pytorch-cuda=12.1  # Adjust based on your CUDA version
+  
+  # GPU Acceleration
+  - numba>=0.58.0
+  
+  # Jupyter and Interactive Development
+  - jupyter>=1.0.0
+  - jupyterlab>=4.0.0
+  - ipywidgets>=8.0.0
+  - notebook>=7.0.0
+  
+  # Visualization
+  - plotly>=5.15.0
+  - seaborn>=0.12.0
+  - bokeh>=3.2.0
+  
+  # Data Processing
+  - h5py>=3.9.0
+  - zarr>=2.16.0
+  - dask>=2023.7.0
+  - joblib>=1.3.0
+  
+  # Scientific Libraries
+  - sympy>=1.12
+  - networkx>=3.1
+  - scikit-image>=0.21.0
+  
+  # Development Tools
+  - pytest>=7.4.0
+  - black>=23.7.0
+  - flake8>=6.0.0
+  - mypy>=1.5.0
+  - pre-commit>=3.3.0
+  
+  # Documentation
+  - sphinx>=7.1.0
+  - sphinx-rtd-theme>=1.3.0
+  - nbsphinx>=0.9.0
+  
+  # Performance Profiling
+  - memory-profiler>=0.61.0
+  - line-profiler>=4.1.0
+  
+  # System Libraries
+  - gcc_linux-64
+  - gxx_linux-64
+  - make
+  - cmake
+  
+  # Pip dependencies (for packages not available in conda)
+  - pip
+  - pip:
+    - hpfracc>=1.0.0  # Your fractional calculus library
+    - cupy-cuda12x>=12.0.0  # GPU-accelerated fractional operations
+    - wandb>=0.15.0  # Experiment tracking
+    - optuna>=3.3.0  # Hyperparameter optimization
+    - hydra-core>=1.3.0  # Configuration management
+    - tensorboard>=2.13.0
+    - tqdm>=4.65.0
+    - Pillow>=10.0.0
+    - py-spy>=0.3.14
+    - scalene>=1.5.0
+    - python-dotenv>=1.0.0
+    - click>=8.1.0
+    - rich>=13.5.0

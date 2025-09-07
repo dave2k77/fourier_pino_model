@@ -1,4 +1,4 @@
-# BiophysicsPINO: Revolutionary Multi-Scale Neural Modeling Framework
+ve conda, let's use it to mange the envs.# BiophysicsPINO: Revolutionary Multi-Scale Neural Modeling Framework
 ## Complete Technical Specification & 2-Year Development Plan
 
 **Building on Davian Chin's Optimal Physics Loss Coefficient Research**  
