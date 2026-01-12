@@ -177,3 +177,6 @@ graphs/
 # Keep only essential documentation images
 !images/*.svg
 !images/README.md
+
+# Research
+research/
