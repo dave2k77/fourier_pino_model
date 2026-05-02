@@ -9,9 +9,8 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 setup(
     name="fourier-pino-model",
     version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
-    description="Physics-Informed Neural Operators (PINO) with Fourier Analysis for 2D Heat Equation",
+    author="Fourier PINO contributors",
+    description="Physics-Informed Neural Operators with Fourier analysis for the 2D heat equation",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/fourier_pino_model",

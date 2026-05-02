@@ -47,8 +47,8 @@ def main():
     print("\n📊 Loading dataset...")
     try:
         dataset = HeatmapPDEDataset(
-            heatmap_folder="images/heatmaps",
-            pde_solution_folder="images/pde_solutions",
+            heatmap_folder="data/heatmaps",
+            pde_solution_folder="data/pde_solutions",
             transform_size=(64, 64)
         )
         print(f"Dataset loaded: {len(dataset)} samples")
@@ -60,7 +60,7 @@ def main():
         
     except FileNotFoundError as e:
         print(f"⚠️  Data not found: {e}")
-        print("Please ensure you have the required data files in images/heatmaps and images/pde_solutions")
+        print("Generate data with: python scripts/generate_heat_equation_data.py --output_dir data")
         return
     
     # Create data loaders

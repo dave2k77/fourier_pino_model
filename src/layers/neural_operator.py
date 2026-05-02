@@ -7,7 +7,7 @@ learning the mapping between PDE space and latent solution space.
 
 import torch
 import torch.nn as nn
-from typing import List
+from typing import List, Optional
 
 
 class NeuralOperator(nn.Module):
@@ -21,7 +21,7 @@ class NeuralOperator(nn.Module):
     processing complex-valued tensors by separating real and imaginary parts.
     """
     
-    def __init__(self, input_size: int = 64, hidden_dims: List[int] = [128, 256, 128]):
+    def __init__(self, input_size: int = 64, hidden_dims: Optional[List[int]] = None):
         """
         Initialize the Neural Operator.
         
@@ -32,7 +32,7 @@ class NeuralOperator(nn.Module):
         super(NeuralOperator, self).__init__()
         
         self.input_size = input_size
-        self.hidden_dims = hidden_dims
+        self.hidden_dims = hidden_dims or [128, 256, 128]
         
         # Calculate input and output dimensions
         # Complex numbers have 2 components (real, imaginary)
@@ -43,7 +43,7 @@ class NeuralOperator(nn.Module):
         layers = []
         prev_dim = input_dim
         
-        for hidden_dim in hidden_dims:
+        for hidden_dim in self.hidden_dims:
             layers.extend([
                 nn.Linear(prev_dim, hidden_dim),
                 nn.GELU()

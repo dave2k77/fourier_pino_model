@@ -12,9 +12,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import unittest
 import torch
 import numpy as np
+import tempfile
+from pathlib import Path
+from PIL import Image
 
 from src.models import PINO_2D_Heat_Equation
 from src.layers import FourierTransformLayer, NeuralOperator, InverseFourierTransformLayer
+from src.data import HeatmapPDEDataset
+from src.utils import compute_loss_breakdown, loss_function
 
 
 class TestPINOComponents(unittest.TestCase):
@@ -151,6 +156,48 @@ class TestPINOComponents(unittest.TestCase):
             # Check that parameters are on CPU
             for param in model.parameters():
                 self.assertEqual(param.device.type, "cpu")
+
+    def test_loss_breakdown(self):
+        """Test that loss reporting separates data and physics terms."""
+        output = torch.randn(self.batch_size, 1, self.input_size, self.input_size)
+        target = torch.randn_like(output)
+
+        breakdown = compute_loss_breakdown(output, target, physics_loss_coefficient=0.01)
+        scalar_loss = loss_function(output, target, physics_loss_coefficient=0.01)
+
+        self.assertEqual(breakdown.total.dim(), 0)
+        self.assertEqual(breakdown.data.dim(), 0)
+        self.assertEqual(breakdown.physics.dim(), 0)
+        self.assertTrue(torch.isfinite(breakdown.total))
+        self.assertTrue(torch.allclose(breakdown.total, scalar_loss))
+
+    def test_dataset_loader(self):
+        """Test that PNG/NPZ pairs load and resize correctly."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            heatmap_dir = root / "heatmaps"
+            solution_dir = root / "pde_solutions"
+            heatmap_dir.mkdir()
+            solution_dir.mkdir()
+
+            image = (np.random.rand(16, 16) * 255).astype(np.uint8)
+            Image.fromarray(image).save(heatmap_dir / "sample.png")
+            np.savez(
+                solution_dir / "sample.npz",
+                solution=np.random.rand(16, 16).astype(np.float32),
+            )
+
+            dataset = HeatmapPDEDataset(
+                str(heatmap_dir),
+                str(solution_dir),
+                transform_size=(self.input_size, self.input_size),
+            )
+            heatmap, solution = dataset[0]
+
+            self.assertEqual(heatmap.shape, (1, self.input_size, self.input_size))
+            self.assertEqual(solution.shape, (1, self.input_size, self.input_size))
+            self.assertTrue(torch.is_floating_point(heatmap))
+            self.assertTrue(torch.is_floating_point(solution))
 
 
 class TestModelGradients(unittest.TestCase):

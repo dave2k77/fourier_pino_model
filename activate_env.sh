@@ -1,28 +1,13 @@
 #!/bin/bash
-# Activation script for FractionalPINO project
+# Activation helper for the focused Fourier PINO environment.
 
-echo "🚀 Activating FractionalPINO Environment"
-echo "========================================"
+set -e
 
-# Activate conda environment
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate fractional-pino
+conda activate fourier-pino
 
-# Verify environment
-echo "✅ Environment activated: fractional-pino"
-echo "🐍 Python version: $(python --version)"
-echo "🔥 PyTorch version: $(python -c 'import torch; print(torch.__version__)')"
-echo "🎯 CUDA available: $(python -c 'import torch; print(torch.cuda.is_available())')"
-echo "🧮 hpfracc version: $(python -c 'import hpfracc; print(hpfracc.__version__)')"
-echo "⚡ CuPy version: $(python -c 'import cupy; print(cupy.__version__)')"
-
-echo ""
-echo "🎉 Ready for FractionalPINO development!"
-echo "📁 Project directory: $(pwd)"
-echo ""
-echo "Available commands:"
-echo "  make help          - Show available commands"
-echo "  python train_pino.py - Train PINO model"
-echo "  jupyter lab        - Start Jupyter Lab"
-echo "  pytest            - Run tests"
-echo ""
+echo "Environment: fourier-pino"
+python --version
+python -c 'import torch; print(f"PyTorch: {torch.__version__}")'
+python -c 'import torch; print(f"CUDA available: {torch.cuda.is_available()}")'
+echo "Run 'make help' for project commands."

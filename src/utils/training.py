@@ -9,9 +9,19 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-from typing import Tuple, List, Optional, Callable
+from dataclasses import dataclass
+from typing import Tuple, List, Optional, Callable, Dict, Union
 import numpy as np
 from tqdm import tqdm
+
+
+@dataclass
+class LossBreakdown:
+    """Data, physics, and total loss values for a PINO prediction."""
+
+    total: torch.Tensor
+    data: torch.Tensor
+    physics: torch.Tensor
 
 
 def fourier_derivative_2d(input_tensor: torch.Tensor, axis: int = 0) -> torch.Tensor:
@@ -97,10 +107,10 @@ def energy_conservation_loss(output: torch.Tensor, target: torch.Tensor,
     return total_loss / batch_size
 
 
-def loss_function(output: torch.Tensor, target: torch.Tensor, 
-                 physics_loss_coefficient: float = 0.001) -> torch.Tensor:
+def compute_loss_breakdown(output: torch.Tensor, target: torch.Tensor,
+                           physics_loss_coefficient: float = 0.001) -> LossBreakdown:
     """
-    Combined loss function for PINO model.
+    Compute data, physics, and total losses for PINO training.
     
     Args:
         output: Model output (complex tensor)
@@ -108,25 +118,41 @@ def loss_function(output: torch.Tensor, target: torch.Tensor,
         physics_loss_coefficient: Weight for physics loss component
         
     Returns:
-        Combined loss value
+        LossBreakdown with differentiable tensors
     """
-    output_real = output.real
+    output_real = output.real if torch.is_complex(output) else output
     operator_loss = nn.MSELoss()(output_real, target)
     physics_loss = energy_conservation_loss(output_real, target)
     total_loss = operator_loss + physics_loss_coefficient * physics_loss
-    
-    return total_loss
+
+    return LossBreakdown(total=total_loss, data=operator_loss, physics=physics_loss)
 
 
-def train(model: nn.Module, 
-          loss_fn: Callable, 
+def loss_function(output: torch.Tensor, target: torch.Tensor,
+                  physics_loss_coefficient: float = 0.001) -> torch.Tensor:
+    """
+    Combined scalar loss for PINO model.
+
+    This wrapper is retained as the simple public loss API. Use
+    compute_loss_breakdown when experiment reporting needs separate data and
+    physics terms.
+    """
+    return compute_loss_breakdown(output, target, physics_loss_coefficient).total
+
+
+def train(model: nn.Module,
+          loss_fn: Callable,
           optimizer: optim.Optimizer, 
           train_loader: DataLoader, 
           test_loader: DataLoader, 
           num_epochs: int, 
           physics_loss_coefficient: float = 0.001,
           device: Optional[torch.device] = None,
-          verbose: bool = True) -> Tuple[List[float], List[float], float]:
+          verbose: bool = True,
+          return_history: bool = False) -> Union[
+              Tuple[List[float], List[float], float],
+              Dict[str, object],
+          ]:
     """
     Train the PINO model.
     
@@ -151,6 +177,10 @@ def train(model: nn.Module,
     
     train_loss_history = []
     test_loss_history = []
+    train_data_loss_history = []
+    train_physics_loss_history = []
+    test_data_loss_history = []
+    test_physics_loss_history = []
     r2_scores = []
     
     if verbose:
@@ -162,8 +192,14 @@ def train(model: nn.Module,
         # Training phase
         model.train()
         running_loss = 0.0
+        running_data_loss = 0.0
+        running_physics_loss = 0.0
         
-        train_pbar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{num_epochs} [Train]") if verbose else train_loader
+        train_pbar = (
+            tqdm(train_loader, desc=f"Epoch {epoch+1}/{num_epochs} [Train]")
+            if verbose
+            else train_loader
+        )
         
         for i, (heatmaps, pde_solutions) in enumerate(train_pbar):
             heatmaps = heatmaps.to(device)
@@ -172,41 +208,56 @@ def train(model: nn.Module,
             optimizer.zero_grad()
             
             outputs = model(heatmaps)
-            loss = loss_fn(outputs, pde_solutions, physics_loss_coefficient)
+            breakdown = compute_loss_breakdown(outputs, pde_solutions, physics_loss_coefficient)
+            loss = breakdown.total
             loss.backward()
             optimizer.step()
             
             running_loss += loss.item()
+            running_data_loss += breakdown.data.item()
+            running_physics_loss += breakdown.physics.item()
             
             if verbose and isinstance(train_pbar, tqdm):
                 train_pbar.set_postfix({"Loss": f"{loss.item():.4f}"})
         
         epoch_train_loss = running_loss / len(train_loader)
         train_loss_history.append(epoch_train_loss)
+        train_data_loss_history.append(running_data_loss / len(train_loader))
+        train_physics_loss_history.append(running_physics_loss / len(train_loader))
         
         # Evaluation phase
         model.eval()
         test_loss = 0.0
+        test_data_loss = 0.0
+        test_physics_loss = 0.0
         epoch_r2_scores = []
         
         with torch.no_grad():
-            test_pbar = tqdm(test_loader, desc=f"Epoch {epoch+1}/{num_epochs} [Test]") if verbose else test_loader
+            test_pbar = (
+                tqdm(test_loader, desc=f"Epoch {epoch+1}/{num_epochs} [Test]")
+                if verbose
+                else test_loader
+            )
             
             for heatmaps, pde_solutions in test_pbar:
                 heatmaps = heatmaps.to(device)
                 pde_solutions = pde_solutions.to(device)
                 
                 outputs = model(heatmaps)
-                loss = loss_fn(outputs, pde_solutions, physics_loss_coefficient)
-                test_loss += loss.item()
+                breakdown = compute_loss_breakdown(outputs, pde_solutions, physics_loss_coefficient)
+                test_loss += breakdown.total.item()
+                test_data_loss += breakdown.data.item()
+                test_physics_loss += breakdown.physics.item()
                 
                 # Calculate R² score
-                outputs_real = outputs.real
+                outputs_real = outputs.real if torch.is_complex(outputs) else outputs
                 r2_score = calculate_r2_score(outputs_real, pde_solutions)
                 epoch_r2_scores.append(r2_score)
         
         epoch_test_loss = test_loss / len(test_loader)
         test_loss_history.append(epoch_test_loss)
+        test_data_loss_history.append(test_data_loss / len(test_loader))
+        test_physics_loss_history.append(test_physics_loss / len(test_loader))
         
         mean_r2 = np.mean(epoch_r2_scores)
         r2_scores.append(mean_r2)
@@ -222,6 +273,19 @@ def train(model: nn.Module,
     if verbose:
         print(f"Training completed. Final mean R² score: {final_mean_r2:.4f}")
     
+    if return_history:
+        history: Dict[str, object] = {
+            "train_loss": train_loss_history,
+            "test_loss": test_loss_history,
+            "train_data_loss": train_data_loss_history,
+            "train_physics_loss": train_physics_loss_history,
+            "test_data_loss": test_data_loss_history,
+            "test_physics_loss": test_physics_loss_history,
+            "r2_score": r2_scores,
+            "final_r2": final_mean_r2,
+        }
+        return history
+
     return train_loss_history, test_loss_history, final_mean_r2
 
 

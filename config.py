@@ -31,13 +31,14 @@ class TrainingConfig:
     train_ratio: float = 0.8
     random_seed: int = 42
     device: str = "auto"  # "auto", "cpu", "cuda"
+    optimizer: str = "Adam"
 
 
 @dataclass
 class DataConfig:
     """Configuration for data loading and preprocessing."""
-    heatmap_folder: str = "images/heatmaps"
-    pde_solution_folder: str = "images/pde_solutions"
+    heatmap_folder: str = "data/heatmaps"
+    pde_solution_folder: str = "data/pde_solutions"
     transform_size: Tuple[int, int] = (64, 64)
     output_dir: str = "outputs"
 
@@ -45,19 +46,8 @@ class DataConfig:
 @dataclass
 class ExperimentConfig:
     """Configuration for different experiments."""
-    # Experiment A: SGD optimizer with different learning rates
-    experiment_a = {
-        "optimizer": "SGD",
-        "learning_rates": [0.001, 0.005, 0.01],
-        "physics_loss_coefficients": [0.001, 0.01, 0.1]
-    }
-    
-    # Experiment B: Adam optimizer with different learning rates
-    experiment_b = {
-        "optimizer": "Adam",
-        "learning_rates": [0.001, 0.005, 0.01],
-        "physics_loss_coefficients": [0.001, 0.01, 0.1]
-    }
+    optimizers: Tuple[str, ...] = ("SGD", "Adam")
+    physics_loss_coefficients: Tuple[float, ...] = (0.001, 0.01, 0.1)
 
 
 @dataclass
@@ -90,7 +80,9 @@ class PINOConfig:
         if not os.path.exists(self.data.heatmap_folder):
             raise FileNotFoundError(f"Heatmap folder not found: {self.data.heatmap_folder}")
         if not os.path.exists(self.data.pde_solution_folder):
-            raise FileNotFoundError(f"PDE solution folder not found: {self.data.pde_solution_folder}")
+            raise FileNotFoundError(
+                f"PDE solution folder not found: {self.data.pde_solution_folder}"
+            )
 
 
 # Default configuration

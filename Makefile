@@ -1,156 +1,51 @@
-# Makefile for Fourier PINO Model
+# Makefile for the focused Fourier PINO research artifact
 
-.PHONY: help install install-dev test clean lint format docs run-example
+.PHONY: help install install-dev test lint format clean data train sweep check
 
-# Default target
 help:
 	@echo "Available commands:"
-	@echo "  install      - Install dependencies"
-	@echo "  install-dev  - Install development dependencies"
-	@echo "  test         - Run tests"
-	@echo "  lint         - Run linting"
-	@echo "  format       - Format code with black"
-	@echo "  clean        - Clean build artifacts"
-	@echo "  docs         - Generate documentation"
-	@echo "  run-example  - Run basic usage example"
-	@echo "  train        - Train model with default settings"
-	@echo "  train-custom - Train with custom parameters"
-	@echo "  train-exp-a  - Run Experiment A (low physics loss)"
-	@echo "  train-exp-b  - Run Experiment B (high physics loss)"
-	@echo ""
-	@echo "Enhanced Training:"
-	@echo "  train-enhanced       - Run all enhanced experiments"
-	@echo "  train-enhanced-single - Run single enhanced experiment"
-	@echo "  train-enhanced-low   - Run low physics loss experiments"
-	@echo "  train-enhanced-medium - Run medium physics loss experiments"
-	@echo "  train-enhanced-high  - Run high physics loss experiments"
-	@echo "  train-enhanced-advanced - Run advanced optimizer experiments"
-	@echo ""
-	@echo "Baseline Reproduction:"
-	@echo "  baseline-test        - Test baseline reproduction setup"
-	@echo "  baseline-reproduce   - Run full baseline reproduction"
-	@echo "  baseline-reproduce-single - Run single experiment (B2)"
-	@echo "  validate-baseline    - Quick validation of baseline"
+	@echo "  install      Install runtime dependencies"
+	@echo "  install-dev  Install runtime and development dependencies"
+	@echo "  test         Run unit tests"
+	@echo "  lint         Run static checks"
+	@echo "  format       Format active source and tests"
+	@echo "  data         Generate a compact heat-equation dataset"
+	@echo "  train        Run one baseline training job"
+	@echo "  sweep        Run the canonical optimizer x physics-loss sweep"
+	@echo "  clean        Remove local caches and generated outputs"
 
-# Install dependencies
 install:
 	pip install -r requirements.txt
 
-# Install development dependencies
 install-dev:
-	pip install -r requirements.txt
-	pip install -e ".[dev]"
+	pip install -r requirements-dev.txt
+	pip install -e .
 
-# Run tests
 test:
-	python -m pytest tests/ -v
+	python -m pytest tests/ -q
 
-# Run linting
 lint:
-	flake8 src/ tests/ --max-line-length=88 --ignore=E203,W503
+	python -m compileall -q src train_pino.py config.py scripts tests
+	flake8 src/ tests/ scripts/ train_pino.py config.py --max-line-length=120 --ignore=E203,W503
 	mypy src/ --ignore-missing-imports
 
-# Format code
 format:
-	black src/ tests/ --line-length=88
-	isort src/ tests/
+	black src/ tests/ train_pino.py config.py --line-length=100
 
-# Clean build artifacts
+data:
+	python scripts/generate_heat_equation_data.py --output_dir data --grid_size 64 --time_steps 20
+
+train:
+	python train_pino.py --mode single --heatmap_folder data/heatmaps \
+		--pde_folder data/pde_solutions --verbose
+
+sweep:
+	python train_pino.py --mode sweep --heatmap_folder data/heatmaps \
+		--pde_folder data/pde_solutions
+
+check: lint test
+
 clean:
-	rm -rf build/
-	rm -rf dist/
-	rm -rf *.egg-info/
-	rm -rf __pycache__/
-	rm -rf src/__pycache__/
-	rm -rf src/*/__pycache__/
-	rm -rf tests/__pycache__/
+	rm -rf build/ dist/ *.egg-info/ outputs/ .pytest_cache/ .mypy_cache/
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name "__pycache__" -delete
-
-# Generate documentation
-docs:
-	@echo "Documentation generation not implemented yet"
-	@echo "Please check the README.md for documentation"
-
-# Run basic usage example
-run-example:
-	python examples/basic_usage.py
-
-# Train model with default settings
-train:
-	python train_pino.py --verbose
-
-# Train with custom settings
-train-custom:
-	python train_pino.py --epochs 50 --lr 0.001 --physics_coeff 0.1 --verbose
-
-# Run experiment A
-train-exp-a:
-	python train_pino.py --config experiment_a --verbose
-
-# Run experiment B
-train-exp-b:
-	python train_pino.py --config experiment_b --verbose
-
-# Baseline reproduction
-baseline-test:
-	python scripts/test_baseline.py
-
-baseline-reproduce:
-	python scripts/reproduce_baseline.py
-
-baseline-reproduce-single:
-	python scripts/reproduce_baseline.py --experiment experiment_b2
-
-# Quick validation
-validate-baseline: baseline-test
-	@echo "Baseline validation completed"
-
-# Enhanced training commands
-train-enhanced: ## Run all enhanced training experiments
-	@echo "Running enhanced training experiments..."
-	python scripts/enhanced_training.py
-
-train-enhanced-single: ## Run a single enhanced experiment
-	@echo "Running single enhanced experiment..."
-	@read -p "Enter experiment name: " exp_name; \
-	python scripts/enhanced_training.py --experiment $$exp_name
-
-train-enhanced-low: ## Run low physics loss enhanced experiments
-	@echo "Running low physics loss enhanced experiments..."
-	python scripts/enhanced_training.py --experiment low_physics_a
-	python scripts/enhanced_training.py --experiment low_physics_b
-
-train-enhanced-medium: ## Run medium physics loss enhanced experiments
-	@echo "Running medium physics loss enhanced experiments..."
-	python scripts/enhanced_training.py --experiment medium_physics_a
-	python scripts/enhanced_training.py --experiment medium_physics_b
-
-train-enhanced-high: ## Run high physics loss enhanced experiments
-	@echo "Running high physics loss enhanced experiments..."
-	python scripts/enhanced_training.py --experiment high_physics_a
-	python scripts/enhanced_training.py --experiment high_physics_b
-
-train-enhanced-advanced: ## Run advanced optimizer experiments
-	@echo "Running advanced optimizer experiments..."
-	python scripts/enhanced_training.py --experiment advanced_sgd
-	python scripts/enhanced_training.py --experiment advanced_adamw
-
-# Check code quality
-check: lint test
-	@echo "Code quality check completed"
-
-# Setup development environment
-setup-dev: install-dev
-	@echo "Development environment setup completed"
-	@echo "Run 'make test' to verify installation"
-
-# Show project info
-info:
-	@echo "Fourier PINO Model"
-	@echo "=================="
-	@echo "Python version: $(shell python --version)"
-	@echo "PyTorch version: $(shell python -c 'import torch; print(torch.__version__)')"
-	@echo "CUDA available: $(shell python -c 'import torch; print(torch.cuda.is_available())')"
-	@echo "Project structure:"
-	@tree -I '__pycache__|*.pyc|*.egg-info|build|dist' -L 3

@@ -5,6 +5,8 @@ This module implements the complete PINO architecture combining Fourier transfor
 layers with neural operators for solving partial differential equations.
 """
 
+from typing import List, Optional
+
 import torch
 import torch.nn as nn
 from ..layers import FourierTransformLayer, NeuralOperator, InverseFourierTransformLayer
@@ -23,7 +25,7 @@ class PINO_2D_Heat_Equation(nn.Module):
         - Decoder: Inverse Fourier Transform Layer
     """
     
-    def __init__(self, input_size: int = 64, hidden_dims: list = [128, 256, 128]):
+    def __init__(self, input_size: int = 64, hidden_dims: Optional[List[int]] = None):
         """
         Initialize the PINO model.
         
@@ -34,13 +36,13 @@ class PINO_2D_Heat_Equation(nn.Module):
         super(PINO_2D_Heat_Equation, self).__init__()
         
         self.input_size = input_size
-        self.hidden_dims = hidden_dims
+        self.hidden_dims = hidden_dims or [128, 256, 128]
         
         # Initialize the three main components
         self.encoder = FourierTransformLayer()
         self.neural_operator = NeuralOperator(
             input_size=input_size,
-            hidden_dims=hidden_dims
+            hidden_dims=self.hidden_dims
         )
         self.decoder = InverseFourierTransformLayer()
     

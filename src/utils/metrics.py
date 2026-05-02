@@ -7,8 +7,7 @@ of the PINO model on PDE solving tasks.
 
 import torch
 import numpy as np
-from typing import Dict, List, Tuple
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+from typing import Dict
 
 
 def calculate_r2_score(predictions: torch.Tensor, targets: torch.Tensor) -> float:
@@ -51,7 +50,7 @@ def calculate_mse(predictions: torch.Tensor, targets: torch.Tensor) -> float:
     pred_np = predictions.detach().cpu().numpy().flatten()
     target_np = targets.detach().cpu().numpy().flatten()
     
-    return mean_squared_error(target_np, pred_np)
+    return float(np.mean((target_np - pred_np) ** 2))
 
 
 def calculate_mae(predictions: torch.Tensor, targets: torch.Tensor) -> float:
@@ -68,7 +67,7 @@ def calculate_mae(predictions: torch.Tensor, targets: torch.Tensor) -> float:
     pred_np = predictions.detach().cpu().numpy().flatten()
     target_np = targets.detach().cpu().numpy().flatten()
     
-    return mean_absolute_error(target_np, pred_np)
+    return float(np.mean(np.abs(target_np - pred_np)))
 
 
 def calculate_relative_error(predictions: torch.Tensor, targets: torch.Tensor) -> float:
